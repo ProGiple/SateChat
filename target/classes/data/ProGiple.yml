@@ -1,0 +1,4 @@
+spy_mode: false
+ignore_all: false
+ignored:
+  - NovaSparkle

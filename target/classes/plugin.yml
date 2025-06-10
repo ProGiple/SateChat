@@ -1,0 +1,97 @@
+name: SateChat
+version: '1.0.2.1'
+main: org.satellite.dev.progiple.satechat.SateChat
+api-version: '1.16'
+authors: [ProGiple]
+depend:
+  - LunaSpring
+commands:
+  satechat:
+    usage: /schat reload/send <chat>
+    aliases:
+      - schat
+      - chat
+      - satechats
+      - schats
+      - chats
+      - chatty
+      - chatex
+      - sc
+  privatemessage:
+    usage: /pm <player> <message>
+    aliases:
+      - pm
+      - m
+      - msg
+      - message
+      - private
+      - pmessage
+      - privatem
+      - satemessage
+      - sm
+      - spm
+      - tell
+      - call
+  ignore:
+    usage: /ignore <player>
+    aliases:
+      - ig
+      - ign
+      - sateignore
+      - sateign
+  reply:
+    usage: /r <message>
+    aliases:
+      - r
+      - rep
+      - satereply
+      - sreply
+      - sr
+  broadcast:
+    usage: /bc <message>
+    aliases:
+      - bc
+      - broad
+      - satebc
+      - satebroadcast
+permissions:
+  satechat.*:
+    default: false
+  satechat.reload:
+    default: op
+  satechat.use.<chat>:
+    default: false
+  satechat.privatemessage:
+    default: true
+  satechat.reply:
+    default: true
+  satechat.broadcast:
+    default: op
+  satechat.spy:
+    default: op
+  satechat.ignore:
+    default: op
+  satechat.ignore.all:
+    default: op
+  satechat.useColor:
+    default: op
+  satechat.bypass.cooldown:
+    default: op
+  satechat.bypass.spy:
+    default: false
+  satechat.bypass.ads:
+    default: false
+  satechat.bypass.automessages:
+    default: false
+  satechat.bypass.caps:
+    default: false
+  satechat.bypass.spam:
+    default: false
+  satechat.bypass.swears:
+    default: false
+  satechat.bypass.replacements:
+    default: false
+  satechat.bypass.helpmessages:
+    default: false
+  satechat.bypass.*:
+    default: false

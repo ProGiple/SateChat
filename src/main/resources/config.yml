@@ -1,0 +1,120 @@
+chats:
+  local:
+    enable: true
+    format: '&8▸&r %luckperms_prefix%&r %player_displayname% %luckperms_suffix%&r &8› &f{message}'
+    range: 150
+    cooldownTicks: -1
+  global:
+    enable: true
+    format: '{S}▸&r %luckperms_prefix%&r %player_displayname% %luckperms_suffix%&r {S}› &f{message}'
+    range: -1
+    symbol: '!'
+    cooldownTicks: 60
+broadcast_cooldown: 25
+auto_messages_time: 90 # в секундах
+mentions:
+  symbol: '@'
+  in_chat_format: "&a@{mentioned}&r"
+  sound: UI_BUTTON_CLICK
+spam_block:
+  enable: false
+  commands: []
+swear_block:
+  enable: true
+  commands: []
+  words:
+    - "сука"
+advertisement_block:
+  enable: true
+  key_words:
+    - "айпи"
+  commands: []
+caps_block:
+  enable: true
+  min_letters_for_check: 7
+  min_caps_letter_percent: 60
+  commands: []
+replacement_words:
+  1:
+    word: "ez4"
+    replacement: "Я начал чаще смотреть на мальчиков - это нормально?"
+help_messages:
+  1:
+    word: "как взять кит старт"
+    disable_send_original: false
+    commands:
+      - "[BROADCAST] Брать кит старт с помощью команды /kit start"
+messages:
+  reload:
+    - "&aПлагин перезагружен!"
+  noPermission:
+    - "&cУ вас нет прав на это!"
+  chatNotExists:
+    - "&cЧат не существует!"
+  chatIsBlocked:
+    - "&cЧат [id] для вас заблокирован!"
+  chatCooldown:
+    - "&cПодождите еще {0} секунд..."
+  playerIsOffline:
+    - "&cИгрок оффлайн"
+  noReply:
+    - "&cНе найдено ни одно сообщения для переотправки"
+  ignoreAll:
+    enabling:
+      - "&aВключено!"
+    disabling:
+      - "&cВыключено!"
+  ignore:
+    enabling:
+      - "&aВключено для [player]!"
+    disabling:
+      - "&cВыключено для [player]!"
+    youAreIgnored:
+      - "&cИгрок [player] вас игнорирует!"
+  spy:
+    enabling:
+      - "&aВключено!"
+    disabling:
+      - "&cВыключено!"
+    format:
+      - "{S}[ РШ ] {sender} &f-> {S}{recipient} &f» {message}"
+  vanilla:
+    onJoin:
+      - "[BROADCAST] &eИгрок [player] зашёл в игру!"
+    onQuit:
+      - "[BROADCAST] &cИгрок [player] вышел из игры!"
+    onDeath:
+      - "[BROADCAST] &eИгрок [player] умер."
+    onDeathFromPlayer:
+      - "[BROADCAST] &eИгрок [player] был убит [killer]!"
+  private_messages:
+    toMe:
+      - "{S}[ ЛС ] {sender} &f-> {S}Вы &f» {message}"
+    fromMe:
+      - "{S}[ ЛС ] Вы &f-> {S}{recipient} &f» {message}"
+    recipientIsYou:
+      - "&cНельзя отправлять сообщение самому себе!"
+  auto_messages:
+    example:
+      - "Тестовое Сообщение"
+  broadcast:
+    - "[BROADCAST] "
+    - "[BROADCAST] {S}[ ! ] %player_displayname% &f» {message}"
+    - "[BROADCAST] "
+  spam_warn:
+    - "&cПерестань спамить!"
+  swear_warn:
+    - "&cПерестань писать плохие слова!"
+  caps_warn:
+    - "&cПерестань капсить!"
+  ads_warn:
+    - "&cПерестань рекламить чужие проекты!"
+  usage:
+    satechat:
+      - "&c/schat reload/send <chat>"
+    privatemessage:
+      - "&c/msg <player> <message>"
+    reply:
+      - "&c/reply <messagee>"
+    broadcast:
+      - "&c/bc <message>"
