@@ -17,7 +17,7 @@ public class SendChatEvent extends PlayerEvent implements Cancellable {
     @Getter @Setter private String message;
     private boolean cancel = false;
     public SendChatEvent(@NotNull Player who, @NonNull Chat chat, @NonNull String message) {
-        super(who);
+        super(who, true);
         this.chat = chat;
         this.message = message;
     }

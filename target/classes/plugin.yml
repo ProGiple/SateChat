@@ -1,5 +1,5 @@
 name: SateChat
-version: '1.0.2.1'
+version: '1.0.5'
 main: org.satellite.dev.progiple.satechat.SateChat
 api-version: '1.16'
 authors: [ProGiple]

@@ -1,12 +1,12 @@
 chats:
   local:
     enable: true
-    format: '&8▸&r %luckperms_prefix%&r %player_displayname% %luckperms_suffix%&r &8› &f{message}'
+    format: '&8▸&r %luckperms_prefix%&r %player_displayname% %luckperms_suffix%&r &8› &f[message]'
     range: 150
     cooldownTicks: -1
   global:
     enable: true
-    format: '{S}▸&r %luckperms_prefix%&r %player_displayname% %luckperms_suffix%&r {S}› &f{message}'
+    format: '{S}▸&r %luckperms_prefix%&r %player_displayname% %luckperms_suffix%&r {S}› &f[message]'
     range: -1
     symbol: '!'
     cooldownTicks: 60
@@ -14,7 +14,7 @@ broadcast_cooldown: 25
 auto_messages_time: 90 # в секундах
 mentions:
   symbol: '@'
-  in_chat_format: "&a@{mentioned}&r"
+  in_chat_format: "&a@[mentioned]&r"
   sound: UI_BUTTON_CLICK
 spam_block:
   enable: false
@@ -54,7 +54,7 @@ messages:
   chatIsBlocked:
     - "&cЧат [id] для вас заблокирован!"
   chatCooldown:
-    - "&cПодождите еще {0} секунд..."
+    - "&cПодождите еще [0] секунд..."
   playerIsOffline:
     - "&cИгрок оффлайн"
   noReply:
@@ -77,7 +77,7 @@ messages:
     disabling:
       - "&cВыключено!"
     format:
-      - "{S}[ РШ ] {sender} &f-> {S}{recipient} &f» {message}"
+      - "{S}[ РШ ] [sender] &f-> {S}[recipient] &f» [message]"
   vanilla:
     onJoin:
       - "[BROADCAST] &eИгрок [player] зашёл в игру!"
@@ -89,9 +89,9 @@ messages:
       - "[BROADCAST] &eИгрок [player] был убит [killer]!"
   private_messages:
     toMe:
-      - "{S}[ ЛС ] {sender} &f-> {S}Вы &f» {message}"
+      - "{S}[ ЛС ] [sender] &f-> {S}Вы &f» [message]"
     fromMe:
-      - "{S}[ ЛС ] Вы &f-> {S}{recipient} &f» {message}"
+      - "{S}[ ЛС ] Вы &f-> {S}[recipient] &f» [message]"
     recipientIsYou:
       - "&cНельзя отправлять сообщение самому себе!"
   auto_messages:
@@ -99,7 +99,7 @@ messages:
       - "Тестовое Сообщение"
   broadcast:
     - "[BROADCAST] "
-    - "[BROADCAST] {S}[ ! ] %player_displayname% &f» {message}"
+    - "[BROADCAST] {S}[ ! ] %player_displayname% &f» [message]"
     - "[BROADCAST] "
   spam_warn:
     - "&cПерестань спамить!"

@@ -2,6 +2,7 @@ org\satellite\dev\progiple\satechat\chats\ChatManager.class
 org\satellite\dev\progiple\satechat\AutoMessager.class
 org\satellite\dev\progiple\satechat\listeners\LeaveJoinHandler.class
 org\satellite\dev\progiple\satechat\listeners\SendChatHandler.class
+org\satellite\dev\progiple\satechat\listeners\event\SendChatEvent.class
 org\satellite\dev\progiple\satechat\commands\SpySubCommand.class
 org\satellite\dev\progiple\satechat\chats\Chat.class
 org\satellite\dev\progiple\satechat\commands\broadcast\BroadCastCommand.class
@@ -12,6 +13,7 @@ org\satellite\dev\progiple\satechat\commands\ReloadSubCommand.class
 org\satellite\dev\progiple\satechat\commands\pm\IgnoreCommand.class
 org\satellite\dev\progiple\satechat\chats\PrivateManager.class
 org\satellite\dev\progiple\satechat\configs\Config.class
+org\satellite\dev\progiple\satechat\listeners\event\PrivateMessagingEvent.class
 org\satellite\dev\progiple\satechat\Tools.class
 org\satellite\dev\progiple\satechat\configs\data\DataManager.class
 org\satellite\dev\progiple\satechat\commands\pm\PMCommand.class

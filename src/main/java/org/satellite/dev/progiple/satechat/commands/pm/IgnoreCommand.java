@@ -18,14 +18,16 @@ import java.util.List;
 
 @LunaCommand("ignore")
 public class IgnoreCommand implements TabExecutor {
+    // ignore Siozik
+
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
-        if (strings.length <= 1 || !(commandSender instanceof Player player)) {
+        if (strings.length == 0 || !(commandSender instanceof Player player)) {
             Config.sendMessage(commandSender, "usage.satechat");
             return true;
         }
 
-        if (strings[1].equalsIgnoreCase("all")) {
+        if (strings[0].equalsIgnoreCase("all")) {
             if (!Tools.hasPermission(player, "satechat.ignore.all")) {
                 Config.sendMessage(player, "noPermission");
                 return true;
@@ -37,9 +39,9 @@ public class IgnoreCommand implements TabExecutor {
             return true;
         }
 
-        Player target = Bukkit.getPlayer(strings[1]);
+        Player target = Bukkit.getPlayer(strings[0]);
         if (target == null || !target.isOnline()) {
-            Config.sendMessage(player, "playerIsOffline", "player-%-" + strings[1]);
+            Config.sendMessage(player, "playerIsOffline", "player-%-" + strings[0]);
             return true;
         }
 

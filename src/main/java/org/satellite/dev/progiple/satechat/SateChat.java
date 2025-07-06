@@ -13,8 +13,8 @@ public final class SateChat extends LunaPlugin {
 
     @Override
     public void onEnable() {
-        super.onEnable();
         INSTANCE = this;
+        super.onEnable();
         saveDefaultConfig();
 
         ChatManager.reload();
