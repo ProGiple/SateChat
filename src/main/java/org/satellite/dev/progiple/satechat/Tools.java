@@ -62,7 +62,7 @@ public class Tools {
         List<String> swears = config.getList();
         SwearsConfig.Mode mode = config.getMode();
 
-        String normalized = Translit.process(message.toUpperCase());
+        String normalized = config.disableTranslates() ? Translit.process(message.toUpperCase()) : message.toUpperCase();
         String filtered = normalized;
         for (String swear : swears) {
             String replacement = switch (mode) {
