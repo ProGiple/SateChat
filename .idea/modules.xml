@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/SateChat.iml" filepath="$PROJECT_DIR$/SateChat.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/SateChat.iml" filepath="$PROJECT_DIR$/.idea/SateChat.iml" />
     </modules>
   </component>
 </project>

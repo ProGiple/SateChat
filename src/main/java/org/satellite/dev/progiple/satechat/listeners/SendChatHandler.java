@@ -6,8 +6,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.satellite.dev.progiple.satechat.Tools;
-import org.satellite.dev.progiple.satechat.chats.Chat;
-import org.satellite.dev.progiple.satechat.chats.ChatManager;
+import org.satellite.dev.progiple.satechat.chats.state.ChatManager;
+import org.satellite.dev.progiple.satechat.chats.RawChat;
 import org.satellite.dev.progiple.satechat.configs.Config;
 import org.satellite.dev.progiple.satechat.listeners.event.SendChatEvent;
 
@@ -24,14 +24,14 @@ public class SendChatHandler implements Listener {
         String message = e.getMessage();
         if (message.isEmpty()) return;
 
-        Chat chat = ChatManager.getChat(message.charAt(0));
+        RawChat chat = ChatManager.getChat(message.charAt(0));
         if (chat == null) {
             Config.sendMessage(player, "chatNotExists");
             return;
         }
 
-        if (!Tools.hasPermission(player, "satechat.use." + chat.getId())) {
-            Config.sendMessage(player, "chatIsBlocked", "id-%-" + chat.getId());
+        if (!Tools.hasPermission(player, "satechat.use." + chat.getSettings().getId())) {
+            Config.sendMessage(player, "chatIsBlocked", "id-%-" + chat.getSettings().getId());
             return;
         }
 

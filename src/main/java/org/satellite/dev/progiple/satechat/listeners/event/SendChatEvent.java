@@ -9,14 +9,16 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
 import org.satellite.dev.progiple.satechat.chats.Chat;
+import org.satellite.dev.progiple.satechat.chats.RawChat;
 
+@Getter
 public class SendChatEvent extends PlayerEvent implements Cancellable {
     @Getter private static final HandlerList handlerList = new HandlerList();
 
-    @Getter private final Chat chat;
-    @Getter @Setter private String message;
-    private boolean cancel = false;
-    public SendChatEvent(@NotNull Player who, @NonNull Chat chat, @NonNull String message) {
+    private final RawChat chat;
+    @Setter private String message;
+    @Setter private boolean cancelled = false;
+    public SendChatEvent(@NotNull Player who, @NonNull RawChat chat, @NonNull String message) {
         super(who, true);
         this.chat = chat;
         this.message = message;
@@ -25,15 +27,5 @@ public class SendChatEvent extends PlayerEvent implements Cancellable {
     @Override
     public @NotNull HandlerList getHandlers() {
         return handlerList;
-    }
-
-    @Override
-    public boolean isCancelled() {
-        return this.cancel;
-    }
-
-    @Override
-    public void setCancelled(boolean b) {
-        this.cancel = b;
     }
 }

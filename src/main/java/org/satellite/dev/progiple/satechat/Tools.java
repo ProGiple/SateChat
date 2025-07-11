@@ -6,10 +6,16 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.novasparkle.lunaspring.API.util.service.managers.ColorManager;
+import org.satellite.dev.progiple.satechat.configs.AdsConfig;
 import org.satellite.dev.progiple.satechat.configs.Config;
+import org.satellite.dev.progiple.satechat.configs.ReplacementsConfig;
+import org.satellite.dev.progiple.satechat.configs.SwearsConfig;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @UtilityClass
 public class Tools {
@@ -46,20 +52,56 @@ public class Tools {
         return false;
     }
 
-    public boolean swearBlock(CommandSender sender, String message) {
-        if (Tools.hasBypassPermission(sender, "swears")) return false;
+    public String swearReplacement(CommandSender sender, String message) {
+        if (Tools.hasBypassPermission(sender, "swears")) return message;
 
         ConfigurationSection section = Config.getSection("swear_block");
-        if (!section.getBoolean("enable")) return false;
+        if (!section.getBoolean("enable")) return message;
 
-        List<String> swears = section.getStringList("words");
-        if (swears.stream().anyMatch(l -> message.toLowerCase().contains(l.toLowerCase()))) {
-            Config.sendMessage(sender, "swear_warn");
-            Tools.dispatch(section.getStringList("commands"), sender.getName());
-            return true;
+        SwearsConfig config = SwearsConfig.get();
+        List<String> swears = config.getList();
+        SwearsConfig.Mode mode = config.getMode();
+
+        String normalized = Translit.process(message.toUpperCase());
+        String filtered = normalized;
+        for (String swear : swears) {
+            String replacement = switch (mode) {
+                case FULL -> "*".repeat(swear.length());
+                case FUNTIME -> swear.charAt(0) + "*" + swear.charAt(swear.length() - 1);
+                case ONLY_END -> "*".repeat(swear.length() - 1) + swear.charAt(swear.length() - 1);
+                case ONLY_START -> swear.charAt(0) + "*".repeat(swear.length() - 1);
+                case START_WITH_END -> swear.charAt(0) + "*".repeat(Math.max(swear.length() - 2, 0)) + swear.charAt(swear.length() - 1);
+            };
+
+            filtered = filtered.replace(swear.toUpperCase(), replacement);
         }
-        return false;
+
+        if (!filtered.equalsIgnoreCase(normalized)) {
+            Bukkit.getScheduler().runTaskLater(SateChat.getINSTANCE(), () -> {
+                Config.sendMessage(sender, "swear_warn");
+                Tools.dispatch(section.getStringList("commands"), sender.getName());
+            }, 2L);
+            return mergeFiltered(message, filtered.toLowerCase());
+        }
+
+        return message;
     }
+
+    public String mergeFiltered(String original, String filtered) {
+        String[] orig = original.split("\\s+");
+        String[] filt = filtered.split("\\s+");
+
+        if (orig.length != filt.length) return filtered;
+
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < orig.length; i++) {
+            result.append(
+                    orig[i].equalsIgnoreCase(filt[i]) ? orig[i] : filt[i]
+            ).append(" ");
+        }
+        return result.toString().trim();
+    }
+
 
     public boolean capsBlock(CommandSender sender, String message) {
         if (Tools.hasBypassPermission(sender, "caps")) return false;
@@ -83,8 +125,14 @@ public class Tools {
         ConfigurationSection section = Config.getSection("advertisement_block");
         if (!section.getBoolean("enable")) return false;
 
-        List<String> words = section.getStringList("key_words");
-        if (words.stream().anyMatch(l -> message.toLowerCase().contains(l.toLowerCase()))) {
+        AdsConfig adsConfig = AdsConfig.get();
+        List<String> patterns = adsConfig.getFormats();
+
+        String checkedMessage = message;
+        for (String s : adsConfig.getWhitelist()) checkedMessage = checkedMessage.replace(s, "");
+
+        String finalCheckedMessage = checkedMessage;
+        if (patterns.stream().anyMatch(s -> Pattern.compile(s).matcher(finalCheckedMessage).find())) {
             Config.sendMessage(sender, "ads_warn");
             Tools.dispatch(section.getStringList("commands"), sender.getName());
             return true;
@@ -94,34 +142,48 @@ public class Tools {
 
     public String replacementWords(CommandSender sender, String message) {
         if (Tools.hasBypassPermission(sender, "replacements")) return message;
-        ConfigurationSection section = Config.getSection("replacement_words");
 
-        String key = section.getKeys(false)
+        ConfigurationSection section = Config.getSection("replacement_words");
+        if (!section.contains("enable")) return message;
+
+        ReplacementsConfig rplConfig = ReplacementsConfig.get();
+        ConfigurationSection rplSection = rplConfig.getSection();
+
+        String finalNormalized = Translit.process(message);
+        String key = rplSection.getKeys(false)
                 .stream()
-                .filter(k -> message
-                        .toLowerCase()
-                        .contains(Objects.requireNonNull(Objects.requireNonNull(section.getString(k + ".word")).toLowerCase())))
+                .filter(k -> {
+                    String[] split = Objects.requireNonNull(rplSection.getString(k + ".words")).split(", ");
+                    return Arrays.stream(split).anyMatch(w -> finalNormalized.toLowerCase().contains(w.toLowerCase()));
+                })
                 .findFirst()
                 .orElse(null);
         if (key == null || key.isEmpty()) return message;
 
-        return ColorManager.color(Objects.requireNonNull(section.getString(key + ".replacement")));
+        return ColorManager.color(Objects.requireNonNull(rplSection.getString(key + ".replacement")));
     }
 
-    public boolean useHelpMessages(CommandSender sender, String message) {
-        if (Tools.hasBypassPermission(sender, "helpmessages")) return false;
-        ConfigurationSection section = Config.getSection("help_messages");
+    public String replacementCommands(String message) {
+        ConfigurationSection section = Config.getSection("command_replacements");
+        if (!section.getBoolean("enable")) return message;
 
-        String key = section.getKeys(false)
-                .stream()
-                .filter(k -> message
-                        .toLowerCase()
-                        .contains(Objects.requireNonNull(Objects.requireNonNull(section.getString(k + ".word")).toLowerCase())))
-                .findFirst()
-                .orElse(null);
-        if (key == null || key.isEmpty()) return false;
+        String format = section.getString("format");
+        if (format == null || format.isEmpty()) return message;
 
-        Tools.dispatch(section.getStringList(key + ".commands"), sender.getName());
-        return section.getBoolean(key + ".disable_send_original");
+        format = ColorManager.color(format);
+
+        Pattern pattern = Pattern.compile("(?<!\\S)/(\\w+)");
+        Matcher matcher = pattern.matcher(message);
+
+        StringBuilder result = new StringBuilder();
+        while (matcher.find()) {
+            String command = matcher.group(1);
+
+            String formatted = format.replace("[command]", command);
+            matcher.appendReplacement(result, Matcher.quoteReplacement(formatted));
+        }
+        matcher.appendTail(result);
+
+        return result.toString();
     }
 }

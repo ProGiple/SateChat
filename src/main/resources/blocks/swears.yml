@@ -1,0 +1,9 @@
+disable_translates: true # заменять ли сначала символы транслита на обычные русские? (о, а, х и др.)
+# START_WITH_END - замена блять в б***ь
+# FUNTIME - замена блять в б*ь
+# FULL - замена блять в *****
+# ONLY_START - замена блять в б****
+# ONLY_END - замена блять в ****ь
+replacement_mode: START_WITH_END
+list:
+  - сука

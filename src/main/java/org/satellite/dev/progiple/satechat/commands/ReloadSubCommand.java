@@ -5,8 +5,11 @@ import org.novasparkle.lunaspring.API.commands.Invocation;
 import org.novasparkle.lunaspring.API.commands.annotations.Check;
 import org.novasparkle.lunaspring.API.commands.annotations.SubCommand;
 import org.satellite.dev.progiple.satechat.Tools;
-import org.satellite.dev.progiple.satechat.chats.ChatManager;
+import org.satellite.dev.progiple.satechat.chats.state.ChatManager;
+import org.satellite.dev.progiple.satechat.configs.AdsConfig;
 import org.satellite.dev.progiple.satechat.configs.Config;
+import org.satellite.dev.progiple.satechat.configs.ReplacementsConfig;
+import org.satellite.dev.progiple.satechat.configs.SwearsConfig;
 import org.satellite.dev.progiple.satechat.configs.data.DataConfig;
 import org.satellite.dev.progiple.satechat.configs.data.DataManager;
 
@@ -22,6 +25,9 @@ public class ReloadSubCommand implements Invocation {
 
         Config.reload();
         ChatManager.reload();
+        ReplacementsConfig.get().reload();
+        SwearsConfig.get().reload();
+        AdsConfig.get().reload();
         DataManager.getConfigs().forEach(DataConfig::reload);
         Config.sendMessage(commandSender, "reload");
     }

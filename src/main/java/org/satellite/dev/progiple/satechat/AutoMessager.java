@@ -8,6 +8,7 @@ import org.novasparkle.lunaspring.API.util.utilities.LunaMath;
 import org.novasparkle.lunaspring.API.util.utilities.Utils;
 import org.satellite.dev.progiple.satechat.configs.Config;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class AutoMessager extends BukkitRunnable {
@@ -26,7 +27,8 @@ public class AutoMessager extends BukkitRunnable {
         }
 
         this.seconds = 0;
-        List<String> keys = messages.getKeys(false).stream().toList();
+        List<String> keys = new ArrayList<>(messages.getKeys(false));
+        if (keys.isEmpty()) return;
 
         String messageId = keys.get(LunaMath.getRandomInt(0, keys.size()));
         Bukkit.getScheduler().runTask(SateChat.getINSTANCE(), () -> Utils.playersAction(p -> {

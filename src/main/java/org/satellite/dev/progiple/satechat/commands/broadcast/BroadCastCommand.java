@@ -1,5 +1,6 @@
 package org.satellite.dev.progiple.satechat.commands.broadcast;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -9,6 +10,7 @@ import org.novasparkle.lunaspring.API.commands.annotations.LunaCommand;
 import org.novasparkle.lunaspring.API.events.CooldownPrevent;
 import org.satellite.dev.progiple.satechat.Tools;
 import org.satellite.dev.progiple.satechat.configs.Config;
+import org.satellite.dev.progiple.satechat.listeners.event.BroadcastCommandEvent;
 
 import java.util.List;
 
@@ -35,11 +37,19 @@ public class BroadCastCommand implements TabExecutor {
         }
 
         String starterMessage = String.join(" ", List.of(strings).subList(0, strings.length));
-        if (Tools.adsBlocks(commandSender, starterMessage)
-                || Tools.swearBlock(commandSender, starterMessage)
-                || Tools.capsBlock(commandSender, starterMessage)) return true;
+        if (Tools.adsBlocks(commandSender, starterMessage) || Tools.capsBlock(commandSender, starterMessage)) return true;
 
-        send(commandSender, Tools.replacementWords(commandSender, starterMessage));
+        BroadcastCommandEvent event = new BroadcastCommandEvent(commandSender);
+        event.setMessage(starterMessage);
+
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled() || event.getMessage().isEmpty()) return true;
+
+        String message = event.getMessage();
+        message = Tools.swearReplacement(commandSender, message);
+        message = Tools.useColor(commandSender, message);
+        message = Tools.replacementWords(commandSender, message);
+        BroadCastCommand.send(commandSender, Tools.replacementCommands(message));
         return true;
     }
 

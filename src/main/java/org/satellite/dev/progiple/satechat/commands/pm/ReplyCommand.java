@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.novasparkle.lunaspring.API.commands.annotations.LunaCommand;
 import org.satellite.dev.progiple.satechat.Tools;
-import org.satellite.dev.progiple.satechat.chats.PrivateManager;
+import org.satellite.dev.progiple.satechat.chats.state.PrivateManager;
 import org.satellite.dev.progiple.satechat.configs.Config;
 
 import java.util.List;

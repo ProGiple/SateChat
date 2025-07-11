@@ -1,20 +1,23 @@
 chats:
   local:
     enable: true
-    format: '&8▸&r %luckperms_prefix%&r %player_displayname% %luckperms_suffix%&r &8› &f[message]'
+    format: '&8▸&r %luckperms_prefix%&r%player_displayname%&r &8› &f[message]'
     range: 150
     cooldownTicks: -1
   global:
-    enable: true
-    format: '{S}▸&r %luckperms_prefix%&r %player_displayname% %luckperms_suffix%&r {S}› &f[message]'
+    enable: false
+    format: '{S}▸&r %luckperms_prefix%&r%player_displayname%&r {S}› &f[message]'
     range: -1
     symbol: '!'
-    cooldownTicks: 60
-broadcast_cooldown: 25
-auto_messages_time: 90 # в секундах
+    cooldownTicks: 40
+broadcast_cooldown: 30
+auto_messages_time: 90
+command_replacements:
+  enable: true
+  format: "&8[/[command]]&r"
 mentions:
   symbol: '@'
-  in_chat_format: "&a@[mentioned]&r"
+  in_chat_format: "{S}@[mentioned]&r"
   sound: UI_BUTTON_CLICK
 spam_block:
   enable: false
@@ -22,28 +25,19 @@ spam_block:
 swear_block:
   enable: true
   commands: []
-  words:
-    - "сука"
+  file: blocks/swears.yml # path to file
 advertisement_block:
-  enable: true
-  key_words:
-    - "айпи"
+  enable: false
+  file: blocks/ads.yml # path to file
   commands: []
 caps_block:
   enable: true
-  min_letters_for_check: 7
+  min_letters_for_check: 12
   min_caps_letter_percent: 60
   commands: []
 replacement_words:
-  1:
-    word: "ez4"
-    replacement: "Я начал чаще смотреть на мальчиков - это нормально?"
-help_messages:
-  1:
-    word: "как взять кит старт"
-    disable_send_original: false
-    commands:
-      - "[BROADCAST] Брать кит старт с помощью команды /kit start"
+  enable: true
+  file: blocks/replacements.yml # path to file
 messages:
   reload:
     - "&aПлагин перезагружен!"
@@ -61,32 +55,28 @@ messages:
     - "&cНе найдено ни одно сообщения для переотправки"
   ignoreAll:
     enabling:
-      - "&aВключено!"
+      - "&aВы начали игнорировать всех игроков!"
     disabling:
-      - "&cВыключено!"
+      - "&cВы перестали игнорировать всех игроков!"
   ignore:
     enabling:
-      - "&aВключено для [player]!"
+      - "&aВы начали игнорировать игрока [player]!"
     disabling:
-      - "&cВыключено для [player]!"
+      - "&cВы перестали игнорировать игрока [player]!"
     youAreIgnored:
       - "&cИгрок [player] вас игнорирует!"
   spy:
     enabling:
-      - "&aВключено!"
+      - "&aВы успешно включили режим шпиона!"
     disabling:
-      - "&cВыключено!"
+      - "&cВы успешно выключили режим шпиона!"
     format:
       - "{S}[ РШ ] [sender] &f-> {S}[recipient] &f» [message]"
   vanilla:
-    onJoin:
-      - "[BROADCAST] &eИгрок [player] зашёл в игру!"
-    onQuit:
-      - "[BROADCAST] &cИгрок [player] вышел из игры!"
-    onDeath:
-      - "[BROADCAST] &eИгрок [player] умер."
-    onDeathFromPlayer:
-      - "[BROADCAST] &eИгрок [player] был убит [killer]!"
+    onJoin: "" # [player]
+    onQuit: "" # [player]
+    onDeath: "" # [player]
+    onDeathFromPlayer: "" # [player] [killer]
   private_messages:
     toMe:
       - "{S}[ ЛС ] [sender] &f-> {S}Вы &f» [message]"
@@ -94,9 +84,8 @@ messages:
       - "{S}[ ЛС ] Вы &f-> {S}[recipient] &f» [message]"
     recipientIsYou:
       - "&cНельзя отправлять сообщение самому себе!"
-  auto_messages:
-    example:
-      - "Тестовое Сообщение"
+  auto_messages: {}
+    # example: "example text"
   broadcast:
     - "[BROADCAST] "
     - "[BROADCAST] {S}[ ! ] %player_displayname% &f» [message]"

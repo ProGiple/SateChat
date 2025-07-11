@@ -1,4 +1,4 @@
-package org.satellite.dev.progiple.satechat.chats;
+package org.satellite.dev.progiple.satechat.chats.state;
 
 import lombok.Getter;
 import lombok.experimental.UtilityClass;
@@ -38,8 +38,11 @@ public class PrivateManager {
             return;
         }
 
-        if (Tools.adsBlocks(sender, message) || Tools.swearBlock(sender, message) || Tools.capsBlock(sender, message)) return;
-        message = Tools.useColor(sender, Tools.replacementWords(sender, message));
+        if (Tools.adsBlocks(sender, message) || Tools.capsBlock(sender, message)) return;
+        message = Tools.swearReplacement(sender, message);
+        message = Tools.useColor(sender, message);
+        message = Tools.replacementWords(sender, message);
+        message = Tools.replacementCommands(message);
 
         PrivateMessagingEvent privateMessagingEvent = new PrivateMessagingEvent(senderUUID, recipientUUID);
         privateMessagingEvent.setMessage(message);
