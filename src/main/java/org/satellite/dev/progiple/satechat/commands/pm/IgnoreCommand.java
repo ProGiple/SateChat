@@ -11,7 +11,8 @@ import org.novasparkle.lunaspring.API.commands.annotations.LunaCommand;
 import org.novasparkle.lunaspring.API.util.utilities.Utils;
 import org.satellite.dev.progiple.satechat.Tools;
 import org.satellite.dev.progiple.satechat.configs.Config;
-import org.satellite.dev.progiple.satechat.configs.data.DataManager;
+import org.satellite.dev.progiple.satechat.users.ChatUserManager;
+import org.satellite.dev.progiple.satechat.users.IChatUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,20 +22,20 @@ public class IgnoreCommand implements TabExecutor {
     // ignore Siozik
 
     @Override
-    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
-        if (strings.length == 0 || !(commandSender instanceof Player player)) {
-            Config.sendMessage(commandSender, "usage.satechat");
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
+        if (strings.length == 0 || !(sender instanceof Player player)) {
+            Config.sendMessage(sender, "usage.satechat");
             return true;
         }
 
+        IChatUser chatUser = ChatUserManager.get(player.getUniqueId());
         if (strings[0].equalsIgnoreCase("all")) {
             if (!Tools.hasPermission(player, "satechat.ignore.all")) {
                 Config.sendMessage(player, "noPermission");
                 return true;
             }
 
-
-            boolean b = DataManager.getConfig(player.getUniqueId()).switchIgnore();
+            boolean b = chatUser.switchIgnoreAll();
             Config.sendMessage(player, "ignoreAll." + (b ? "enabling" : "disabling"));
             return true;
         }
@@ -50,13 +51,13 @@ public class IgnoreCommand implements TabExecutor {
             return true;
         }
 
-        boolean b = DataManager.getConfig(player.getUniqueId()).switchIgnore(target);
+        boolean b = chatUser.switchIgnore(target);
         Config.sendMessage(player, "ignore." + (b ? "enabling" : "disabling"), "player-%-" + target.getName());
         return true;
     }
 
     @Override
-    public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
+    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
         if (strings.length != 1) return List.of();
 
         List<String> tab = new ArrayList<>(Bukkit.getOnlinePlayers().stream().map(Player::getName).toList());

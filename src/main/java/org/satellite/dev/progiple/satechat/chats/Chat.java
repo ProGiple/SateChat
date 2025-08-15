@@ -11,6 +11,7 @@ import org.novasparkle.lunaspring.LunaPlugin;
 import org.satellite.dev.progiple.satechat.SateChat;
 import org.satellite.dev.progiple.satechat.Tools;
 import org.satellite.dev.progiple.satechat.configs.Config;
+import org.satellite.dev.progiple.satechat.users.IChatUser;
 
 import java.util.*;
 import java.util.logging.Level;
@@ -24,10 +25,10 @@ public class Chat extends RawChat {
     }
 
     @Override
-    public boolean sendMessage(UUID sender, final String starterMessage) {
-        Player player = Bukkit.getPlayer(sender);
+    public boolean sendMessage(IChatUser sender, final String starterMessage) {
+        Player player = Bukkit.getPlayer(sender.getUUID());
         if (player == null
-                || Tools.spamBlock(this.latestMessage.get(sender), player, starterMessage)
+                || Tools.spamBlock(this.latestMessage.get(sender.getUUID()), player, starterMessage)
                 || Tools.adsBlocks(player, starterMessage)
                 || Tools.capsBlock(player, starterMessage)) return false;
 
@@ -36,7 +37,7 @@ public class Chat extends RawChat {
                     (this.getCooldownPrevent().getCooldownMap().get(sender) - System.currentTimeMillis()) / 1000L));
             return false;
         }
-        this.latestMessage.put(sender, starterMessage);
+        this.latestMessage.put(sender.getUUID(), starterMessage);
 
         Collection<? extends Player> collection = this.getMessageViewers(sender);
         String message = this.mention(collection, Tools.useColor(player, starterMessage));
@@ -79,15 +80,16 @@ public class Chat extends RawChat {
     }
 
     @Override
-    public Collection<? extends Player> getMessageViewers(UUID sender) {
+    public Collection<? extends Player> getMessageViewers(IChatUser sender) {
+        Player player = Bukkit.getPlayer(sender.getUUID());
+        if (player == null) return null;
+
+        Collection<Player> players = player.getWorld().getPlayers();
         if (this.getSettings().getRange() > 0) {
-            Player player = Bukkit.getPlayer(sender);
-            return player == null ? null : player
-                    .getWorld()
-                    .getPlayers()
+            return players
                     .stream()
                     .filter(p -> p.getLocation().distance(player.getLocation()) <= this.getSettings().getRange())
                     .collect(Collectors.toList());
-        } else return Bukkit.getOnlinePlayers();
+        } else return players;
     }
 }

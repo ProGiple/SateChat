@@ -16,6 +16,7 @@ import java.io.File;
 
 public final class SateChat extends LunaPlugin {
     @Getter private static SateChat INSTANCE;
+    private AutoMessager autoMessager;
 
     @Override
     public void onEnable() {
@@ -34,12 +35,19 @@ public final class SateChat extends LunaPlugin {
         ReplacementsConfig.setReplacementsConfig(new ReplacementsConfig(Config.getString("replacement_words.file")));
 
         BroadCastCommand.setCdPrevent();
-        this.processCommands();
+        this.processCommands("org.satellite.dev.progiple.satechat.commands");
 
-        LunaExecutor.initialize(this);
+        LunaExecutor.initialize(this, "org.satellite.dev.progiple.satechat.commands");
         this.registerListeners(new LeaveJoinHandler(), new SendChatHandler());
 
         AutoMessager.resetSettings();
-        new AutoMessager().runTaskTimer(SateChat.getINSTANCE(), 20L, 20L);
+        this.autoMessager = new AutoMessager();
+        this.autoMessager.runTaskTimerAsynchronously(SateChat.getINSTANCE(), 20L, 20L);
+    }
+
+    @Override
+    public void onDisable() {
+        this.autoMessager.cancel();
+        super.onDisable();
     }
 }

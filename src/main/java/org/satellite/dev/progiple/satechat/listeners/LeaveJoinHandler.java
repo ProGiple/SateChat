@@ -7,8 +7,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.satellite.dev.progiple.satechat.configs.Config;
-import org.satellite.dev.progiple.satechat.configs.data.DataConfig;
-import org.satellite.dev.progiple.satechat.configs.data.DataManager;
+import org.satellite.dev.progiple.satechat.users.ChatUserManager;
 
 import java.util.UUID;
 
@@ -19,7 +18,7 @@ public class LeaveJoinHandler implements Listener {
         e.joinMessage(null);
 
         UUID uuid = e.getPlayer().getUniqueId();
-        if (DataManager.getConfig(uuid) == null) new DataConfig(uuid);
+        if (!ChatUserManager.contains(uuid)) ChatUserManager.create(uuid);
     }
 
     @EventHandler
@@ -28,7 +27,7 @@ public class LeaveJoinHandler implements Listener {
         this.broadcastNotifier(e.getPlayer(), "onQuit");
 
         UUID uuid = e.getPlayer().getUniqueId();
-        if (DataManager.getConfig(uuid) != null) DataManager.unregister(DataManager.getConfig(uuid));
+        if (ChatUserManager.contains(uuid)) ChatUserManager.unregister(ChatUserManager.get(uuid));
     }
 
     @EventHandler

@@ -6,26 +6,63 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Getter
 public enum Translit {
-    Y('У'),
-    E('Е'),
-    H('Н'),
-    X('Х'),
-    B('В'),
-    A('А'),
-    P('Р'),
-    O('О'),
-    C('С'),
-    M('М'),
-    N('И'),
-    K('К'),
-    T('Т');
+    SHIFT_ONE("!", "i"),
+    SHIFT_TWO("@", "a"),
+    SHIFT_THREE("$", "s"),
 
-    private final char ruChar;
+    ZERO(0, "o"),
+    ONE(1, "l"),
+    FIVE(5, "s"),
+    SEVEN(7, "j"),
+    NINE(9, "g"),
+    THREE(3, "з"),
+    FOUR(4, "ч"),
+    SIX(6, "б"),
+
+    Y("у"),
+    E("е"),
+    H("н"),
+    X("х"),
+    B("в"),
+    A("а"),
+    P("р"),
+    O("о"),
+    C("с"),
+    M("м"),
+    N("и"),
+    K("к"),
+    T("т");
+
+    private final String target;
+    private String shiftNumber = null;
+    private int number = -1;
+
+    Translit(int numberForReplace, String target) {
+        this.number = numberForReplace;
+        this.target = target;
+    }
+
+    Translit(String shiftNumber, String target) {
+        this.shiftNumber = shiftNumber;
+        this.target = target;
+    }
 
     public static String process(String originalMessage) {
-        String normalized = originalMessage.toUpperCase();
-        for (Translit value : Translit.values())
-            normalized = normalized.replace(value.name(), String.valueOf(value.getRuChar()));
-        return normalized;
+        for (Translit value : Translit.values()) {
+            if (value.number >= 0) {
+                originalMessage = originalMessage.replace(String.valueOf(value.number), value.target);
+                continue;
+            }
+
+            if (value.shiftNumber != null) {
+                originalMessage = originalMessage.replace(value.shiftNumber, value.target);
+                continue;
+            }
+
+            originalMessage = originalMessage
+                    .replace(value.name().toLowerCase(), value.target)
+                    .replace(value.name(), value.target.toUpperCase());
+        }
+        return originalMessage;
     }
 }

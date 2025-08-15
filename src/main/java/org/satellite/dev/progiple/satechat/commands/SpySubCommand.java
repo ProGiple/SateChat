@@ -4,14 +4,14 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.novasparkle.lunaspring.API.commands.Invocation;
 import org.novasparkle.lunaspring.API.commands.ZeroArgCommand;
-import org.novasparkle.lunaspring.API.commands.annotations.Check;
+import org.novasparkle.lunaspring.API.commands.annotations.Flags;
 import org.novasparkle.lunaspring.API.commands.annotations.SubCommand;
 import org.satellite.dev.progiple.satechat.Tools;
 import org.satellite.dev.progiple.satechat.configs.Config;
-import org.satellite.dev.progiple.satechat.configs.data.DataManager;
+import org.satellite.dev.progiple.satechat.users.ChatUserManager;
 
 @SubCommand(appliedCommand = "satechat", commandIdentifiers = {"spy"})
-@Check(permissions = {}, flags = ZeroArgCommand.AccessFlag.PLAYER_ONLY)
+@Flags(ZeroArgCommand.AccessFlag.PLAYER_ONLY)
 public class SpySubCommand implements Invocation {
     @Override
     public void invoke(CommandSender commandSender, String[] strings) {
@@ -26,7 +26,7 @@ public class SpySubCommand implements Invocation {
             return;
         }
 
-        boolean b = DataManager.getConfig(player.getUniqueId()).switchSpyMode();
+        boolean b = ChatUserManager.get(player.getUniqueId()).switchSpy();
         Config.sendMessage(player, "spy." + (b ? "enabling" : "disabling"));
     }
 }

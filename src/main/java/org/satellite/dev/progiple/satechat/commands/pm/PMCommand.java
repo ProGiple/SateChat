@@ -12,6 +12,8 @@ import org.novasparkle.lunaspring.API.util.utilities.Utils;
 import org.satellite.dev.progiple.satechat.Tools;
 import org.satellite.dev.progiple.satechat.chats.state.PrivateManager;
 import org.satellite.dev.progiple.satechat.configs.Config;
+import org.satellite.dev.progiple.satechat.users.ChatUserManager;
+import org.satellite.dev.progiple.satechat.users.IChatUser;
 
 import java.util.List;
 
@@ -35,7 +37,9 @@ public class PMCommand implements TabExecutor {
             return true;
         }
 
-        PrivateManager.sendPrivate(player.getUniqueId(), target.getUniqueId(), List.of(strings).subList(1, strings.length));
+        IChatUser senderUser = ChatUserManager.get(player.getUniqueId());
+        IChatUser recipientUser = ChatUserManager.get(target.getUniqueId());
+        PrivateManager.sendPrivate(senderUser, recipientUser, List.of(strings).subList(1, strings.length));
         return true;
     }
 

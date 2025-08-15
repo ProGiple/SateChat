@@ -8,7 +8,6 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
-import org.satellite.dev.progiple.satechat.chats.Chat;
 import org.satellite.dev.progiple.satechat.chats.RawChat;
 
 @Getter

@@ -10,6 +10,8 @@ import org.novasparkle.lunaspring.API.commands.annotations.LunaCommand;
 import org.satellite.dev.progiple.satechat.Tools;
 import org.satellite.dev.progiple.satechat.chats.state.PrivateManager;
 import org.satellite.dev.progiple.satechat.configs.Config;
+import org.satellite.dev.progiple.satechat.users.ChatUserManager;
+import org.satellite.dev.progiple.satechat.users.IChatUser;
 
 import java.util.List;
 
@@ -27,8 +29,8 @@ public class ReplyCommand implements TabExecutor {
             return true;
         }
 
-        if (!PrivateManager.reply(player.getUniqueId(), List.of(strings).subList(0, strings.length)))
-            Config.sendMessage(player, "noReply");
+        IChatUser chatUser = ChatUserManager.get(player.getUniqueId());
+        if (!PrivateManager.reply(chatUser, List.of(strings).subList(0, strings.length))) Config.sendMessage(player, "noReply");
         return true;
     }
 

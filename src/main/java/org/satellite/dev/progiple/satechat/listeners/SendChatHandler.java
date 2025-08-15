@@ -6,12 +6,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.satellite.dev.progiple.satechat.Tools;
-import org.satellite.dev.progiple.satechat.chats.state.ChatManager;
 import org.satellite.dev.progiple.satechat.chats.RawChat;
+import org.satellite.dev.progiple.satechat.chats.state.ChatManager;
 import org.satellite.dev.progiple.satechat.configs.Config;
 import org.satellite.dev.progiple.satechat.listeners.event.SendChatEvent;
-
-import java.util.UUID;
+import org.satellite.dev.progiple.satechat.users.ChatUserManager;
+import org.satellite.dev.progiple.satechat.users.IChatUser;
 
 public class SendChatHandler implements Listener {
     @EventHandler @SuppressWarnings("deprecation")
@@ -38,8 +38,8 @@ public class SendChatHandler implements Listener {
         SendChatEvent sendChatEvent = new SendChatEvent(player, chat, message);
         Bukkit.getPluginManager().callEvent(sendChatEvent);
         if (!sendChatEvent.isCancelled()) {
-            UUID uuid = player.getUniqueId();
-            chat.sendMessage(uuid, sendChatEvent.getMessage());
+            IChatUser chatUser = ChatUserManager.get(player.getUniqueId());
+            chat.sendMessage(chatUser, sendChatEvent.getMessage());
         }
     }
 }

@@ -1,7 +1,5 @@
 package org.satellite.dev.progiple.satechat.configs;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.novasparkle.lunaspring.API.configuration.IConfig;
 import org.satellite.dev.progiple.satechat.SateChat;

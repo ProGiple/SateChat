@@ -1,7 +1,6 @@
-package org.satellite.dev.progiple.satechat.configs.data;
+package org.satellite.dev.progiple.satechat.configs;
 
 import lombok.Getter;
-import org.bukkit.entity.Player;
 import org.novasparkle.lunaspring.API.configuration.Configuration;
 import org.satellite.dev.progiple.satechat.SateChat;
 
@@ -14,18 +13,14 @@ public class DataConfig {
     @Getter private final UUID uuid;
     public DataConfig(UUID uuid) {
         this.uuid = uuid;
+
         this.config = new Configuration(SateChat.getINSTANCE().getDataFolder(), String.format("data/%s.yml", uuid.toString()));
+        if (this.config.getFile().exists()) return;
 
         this.config.setBoolean("spy_mode", false);
         this.config.setBoolean("ignore_all", false);
         this.config.setStringList("ignored", new ArrayList<>());
         this.config.save();
-
-        DataManager.register(this);
-    }
-
-    public void reload() {
-        this.config.reload();
     }
 
     public boolean switchSpyMode() {
@@ -39,13 +34,12 @@ public class DataConfig {
         return this.config.getStringList("ignored");
     }
 
-    public boolean switchIgnore(Player player) {
+    public boolean switchIgnore(String playerName) {
         List<String> list = this.getIgnored();
-        boolean newState = !list.contains(player.getName());
+        boolean newState = !list.contains(playerName);
 
-        if (newState) {
-            list.add(player.getName());
-        } else list.remove(player.getName());
+        if (newState) list.add(playerName);
+        else list.remove(playerName);
 
         this.config.setStringList("ignored", list);
         this.config.save();
@@ -61,9 +55,5 @@ public class DataConfig {
 
     public boolean getBool(String path) {
         return config.getBoolean(path);
-    }
-
-    public boolean isIgnored(Player player) {
-        return this.getBool("ignore_all") || this.getIgnored().contains(player.getName());
     }
 }

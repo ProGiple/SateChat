@@ -59,49 +59,41 @@ public class Tools {
         if (!section.getBoolean("enable")) return message;
 
         SwearsConfig config = SwearsConfig.get();
+        if (config == null) return message;
+        
         List<String> swears = config.getList();
         SwearsConfig.Mode mode = config.getMode();
 
-        String normalized = config.disableTranslates() ? Translit.process(message.toUpperCase()) : message.toUpperCase();
-        String filtered = normalized;
-        for (String swear : swears) {
-            String replacement = switch (mode) {
-                case FULL -> "*".repeat(swear.length());
-                case FUNTIME -> swear.charAt(0) + "*" + swear.charAt(swear.length() - 1);
-                case ONLY_END -> "*".repeat(swear.length() - 1) + swear.charAt(swear.length() - 1);
-                case ONLY_START -> swear.charAt(0) + "*".repeat(swear.length() - 1);
-                case START_WITH_END -> swear.charAt(0) + "*".repeat(Math.max(swear.length() - 2, 0)) + swear.charAt(swear.length() - 1);
-            };
+        String normalized = config.disableTranslates() ? Translit.process(message) : message;
 
-            filtered = filtered.replace(swear.toUpperCase(), replacement);
+        boolean hasOne = false;
+        for (String part : normalized.split(" ")) {
+            String cleanedString = part.replaceAll("[a-zA-Z0-9]", "");
+            for (String swear : swears) {
+                if (swear.contains(cleanedString) || swear.contains(part)) {
+                    String replacement = switch (mode) {
+                        case FULL -> "*".repeat(swear.length());
+                        case FUNTIME -> swear.charAt(0) + "*" + swear.charAt(swear.length() - 1);
+                        case ONLY_END -> "*".repeat(swear.length() - 1) + swear.charAt(swear.length() - 1);
+                        case ONLY_START -> swear.charAt(0) + "*".repeat(swear.length() - 1);
+                        case START_WITH_END -> swear.charAt(0) + "*".repeat(Math.max(swear.length() - 2, 0)) + swear.charAt(swear.length() - 1);
+                    };
+
+                    normalized = normalized.replace(part, replacement);
+                    hasOne = true;
+                }
+            }
         }
 
-        if (!filtered.equalsIgnoreCase(normalized)) {
+        if (hasOne) {
             Bukkit.getScheduler().runTaskLater(SateChat.getINSTANCE(), () -> {
                 Config.sendMessage(sender, "swear_warn");
                 Tools.dispatch(section.getStringList("commands"), sender.getName());
             }, 2L);
-            return mergeFiltered(message, filtered.toLowerCase());
         }
 
-        return message;
+        return normalized;
     }
-
-    public String mergeFiltered(String original, String filtered) {
-        String[] orig = original.split("\\s+");
-        String[] filt = filtered.split("\\s+");
-
-        if (orig.length != filt.length) return filtered;
-
-        StringBuilder result = new StringBuilder();
-        for (int i = 0; i < orig.length; i++) {
-            result.append(
-                    orig[i].equalsIgnoreCase(filt[i]) ? orig[i] : filt[i]
-            ).append(" ");
-        }
-        return result.toString().trim();
-    }
-
 
     public boolean capsBlock(CommandSender sender, String message) {
         if (Tools.hasBypassPermission(sender, "caps")) return false;
