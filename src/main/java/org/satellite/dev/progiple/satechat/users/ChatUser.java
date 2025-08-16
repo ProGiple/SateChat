@@ -1,7 +1,9 @@
 package org.satellite.dev.progiple.satechat.users;
 
 import lombok.Getter;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 import org.satellite.dev.progiple.satechat.configs.DataConfig;
 
 import java.util.List;
@@ -19,13 +21,18 @@ public class ChatUser implements IChatUser {
     }
 
     @Override
-    public UUID getUUID() {
+    public @NotNull UUID getUUID() {
         return this.dataConfig.getUuid();
     }
 
     @Override
-    public List<String> getIgnoreList() {
+    public @NotNull List<String> getIgnoreList() {
         return this.dataConfig.getIgnored();
+    }
+
+    @Override
+    public Player getPlayer() {
+        return Bukkit.getPlayer(this.getUUID());
     }
 
     @Override

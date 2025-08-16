@@ -10,12 +10,12 @@ import org.satellite.dev.progiple.satechat.users.IChatUser;
 
 import java.util.Collection;
 
-@Getter
-public abstract class RawChat {
+@Getter @Setter
+public abstract class RawChat implements Cloneable {
     private final LunaPlugin plugin;
-    private final CooldownPrevent<IChatUser> cooldownPrevent;
+    private CooldownPrevent<IChatUser> cooldownPrevent;
 
-    @Setter private ChatSettings settings;
+    private ChatSettings settings;
     public RawChat(LunaPlugin plugin, ChatSettings settings) {
         this.plugin = plugin;
         this.settings = settings;
@@ -29,4 +29,18 @@ public abstract class RawChat {
     public abstract String mention(Collection<? extends Player> viewers, String message);
 
     public abstract Collection<? extends Player> getMessageViewers(IChatUser sender);
+
+    public abstract boolean isBlocked(IChatUser chatUser);
+
+    @Override
+    public RawChat clone() {
+        try {
+            RawChat clone = (RawChat) super.clone();
+            clone.cooldownPrevent = this.cooldownPrevent.clone();
+            clone.settings = this.settings.duplicate();
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
+    }
 }

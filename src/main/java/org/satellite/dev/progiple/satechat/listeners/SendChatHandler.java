@@ -5,7 +5,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.satellite.dev.progiple.satechat.Tools;
 import org.satellite.dev.progiple.satechat.chats.RawChat;
 import org.satellite.dev.progiple.satechat.chats.state.ChatManager;
 import org.satellite.dev.progiple.satechat.configs.Config;
@@ -30,15 +29,15 @@ public class SendChatHandler implements Listener {
             return;
         }
 
-        if (!Tools.hasPermission(player, "satechat.use." + chat.getSettings().getId())) {
+        IChatUser chatUser = ChatUserManager.get(player.getUniqueId());
+        if (chat.isBlocked(chatUser)) {
             Config.sendMessage(player, "chatIsBlocked", "id-%-" + chat.getSettings().getId());
             return;
         }
 
-        SendChatEvent sendChatEvent = new SendChatEvent(player, chat, message);
+        SendChatEvent sendChatEvent = new SendChatEvent(player, chatUser, chat, message);
         Bukkit.getPluginManager().callEvent(sendChatEvent);
         if (!sendChatEvent.isCancelled()) {
-            IChatUser chatUser = ChatUserManager.get(player.getUniqueId());
             chat.sendMessage(chatUser, sendChatEvent.getMessage());
         }
     }

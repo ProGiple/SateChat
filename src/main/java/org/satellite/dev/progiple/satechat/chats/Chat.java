@@ -1,7 +1,6 @@
 package org.satellite.dev.progiple.satechat.chats;
 
 import lombok.Getter;
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.novasparkle.lunaspring.API.util.service.managers.ColorManager;
@@ -13,12 +12,15 @@ import org.satellite.dev.progiple.satechat.Tools;
 import org.satellite.dev.progiple.satechat.configs.Config;
 import org.satellite.dev.progiple.satechat.users.IChatUser;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 @Getter
-public class Chat extends RawChat {
+public class Chat extends RawChat{
     private final Map<UUID, String> latestMessage = new HashMap<>();
     public Chat(LunaPlugin lunaPlugin, ChatSettings settings) {
         super(lunaPlugin, settings);
@@ -26,7 +28,7 @@ public class Chat extends RawChat {
 
     @Override
     public boolean sendMessage(IChatUser sender, final String starterMessage) {
-        Player player = Bukkit.getPlayer(sender.getUUID());
+        Player player = sender.getPlayer();
         if (player == null
                 || Tools.spamBlock(this.latestMessage.get(sender.getUUID()), player, starterMessage)
                 || Tools.adsBlocks(player, starterMessage)
@@ -81,7 +83,7 @@ public class Chat extends RawChat {
 
     @Override
     public Collection<? extends Player> getMessageViewers(IChatUser sender) {
-        Player player = Bukkit.getPlayer(sender.getUUID());
+        Player player = sender.getPlayer();
         if (player == null) return null;
 
         Collection<Player> players = player.getWorld().getPlayers();
@@ -91,5 +93,11 @@ public class Chat extends RawChat {
                     .filter(p -> p.getLocation().distance(player.getLocation()) <= this.getSettings().getRange())
                     .collect(Collectors.toList());
         } else return players;
+    }
+
+    @Override
+    public boolean isBlocked(IChatUser chatUser) {
+        Player player = chatUser.getPlayer();
+        return player == null || !Tools.hasPermission(player, "satechat.use." + this.getSettings().getId());
     }
 }

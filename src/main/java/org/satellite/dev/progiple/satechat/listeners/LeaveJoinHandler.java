@@ -27,7 +27,7 @@ public class LeaveJoinHandler implements Listener {
         this.broadcastNotifier(e.getPlayer(), "onQuit");
 
         UUID uuid = e.getPlayer().getUniqueId();
-        if (ChatUserManager.contains(uuid)) ChatUserManager.unregister(ChatUserManager.get(uuid));
+        if (ChatUserManager.contains(uuid)) ChatUserManager.unregister(uuid);
     }
 
     @EventHandler

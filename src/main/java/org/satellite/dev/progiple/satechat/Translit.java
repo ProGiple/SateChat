@@ -12,6 +12,7 @@ public enum Translit {
 
     ZERO(0, "o"),
     ONE(1, "l"),
+    TWO(2, "s"),
     FIVE(5, "s"),
     SEVEN(7, "j"),
     NINE(9, "g"),
@@ -30,6 +31,7 @@ public enum Translit {
     C("с"),
     M("м"),
     N("и"),
+    U("и"),
     K("к"),
     T("т");
 
