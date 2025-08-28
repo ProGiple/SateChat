@@ -3,21 +3,27 @@ chats:
     enable: true
     format: '&8▸&r %luckperms_prefix%&r%player_displayname%&r &8› &f[message]'
     range: 150
+    clickable: true
     cooldownTicks: -1
   global:
     enable: false
     format: '{S}▸&r %luckperms_prefix%&r%player_displayname%&r {S}› &f[message]'
     range: -1
+    range_type: ALL_WORLDS
     symbol: '!'
+    clickable: true
     cooldownTicks: 40
 broadcast_cooldown: 30
 auto_messages_time: 90
+auto_messages: {}
 command_replacements:
   enable: true
   format: "&8[/[command]]&r"
+  clickable_format: "*%*&8[/[command]]&r*%*/[command]*%*"
 mentions:
   symbol: '@'
-  in_chat_format: "{S}@[mentioned]&r"
+  format: "{S}@[mentioned]&r"
+  clickable_format: "*%*{S}@[mentioned]&r*%*/msg [mentioned]*%*"
   sound: UI_BUTTON_CLICK
 spam_block:
   enable: false
@@ -84,11 +90,9 @@ messages:
       - "{S}[ ЛС ] Вы &f-> {S}[recipient] &f» [message]"
     recipientIsYou:
       - "&cНельзя отправлять сообщение самому себе!"
-  auto_messages: {}
-    # example: "example text"
   broadcast:
     - "[BROADCAST] "
-    - "[BROADCAST] {S}[ ! ] %player_displayname% &f» [message]"
+    - "[BROADCAST] {S}[ ! ] [sender] &f» [message]"
     - "[BROADCAST] "
   spam_warn:
     - "&cПерестань спамить!"
@@ -99,8 +103,10 @@ messages:
   ads_warn:
     - "&cПерестань рекламить чужие проекты!"
   usage:
+    ignore:
+      - "&c/ignore all/<player>"
     satechat:
-      - "&c/schat reload/send <chat>"
+      - "&c/schat reload/send"
     privatemessage:
       - "&c/msg <player> <message>"
     reply:

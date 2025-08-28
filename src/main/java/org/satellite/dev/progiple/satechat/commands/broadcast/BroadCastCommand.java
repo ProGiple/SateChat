@@ -13,10 +13,11 @@ import org.satellite.dev.progiple.satechat.configs.Config;
 import org.satellite.dev.progiple.satechat.listeners.event.BroadcastCommandEvent;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @LunaCommand(value = "broadcast")
 public class BroadCastCommand implements TabExecutor {
-    private static final CooldownPrevent<CommandSender> cd = new CooldownPrevent<>();
+    private static CooldownPrevent<CommandSender> cd = new CooldownPrevent<>();
 
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
@@ -31,8 +32,8 @@ public class BroadCastCommand implements TabExecutor {
         }
 
         if ((!Tools.hasBypassPermission(commandSender, "cooldown") && cd.isCancelled(null, commandSender))) {
-            Config.sendMessage(commandSender, "chatCooldown", String.valueOf(
-                    (cd.getCooldownMap().get(commandSender) - System.currentTimeMillis()) / 1000L));
+            long value = cd.getCache().get(commandSender, k -> 0L);
+            Config.sendMessage(commandSender, "chatCooldown", String.valueOf((value - System.currentTimeMillis()) / 1000L));
             return true;
         }
 
@@ -49,7 +50,7 @@ public class BroadCastCommand implements TabExecutor {
         message = Tools.swearReplacement(commandSender, message);
         message = Tools.useColor(commandSender, message);
         message = Tools.replacementWords(commandSender, message);
-        BroadCastCommand.send(commandSender, Tools.replacementCommands(message));
+        BroadCastCommand.send(commandSender, Tools.replacementCommands(message, false));
         return true;
     }
 
@@ -59,10 +60,10 @@ public class BroadCastCommand implements TabExecutor {
     }
 
     public static void send(CommandSender sender, String message) {
-        Config.sendMessage(sender, "broadcast", "message-%-" + message);
+        Config.sendMessage(sender, "broadcast", "message-%-" + message, "sender-%-" + sender.getName());
     }
 
     public static void setCdPrevent() {
-        cd.setCooldownMS(Config.getInt("broadcast_cooldown") * 1000);
+        cd = new CooldownPrevent<>(Math.max(Config.getInt("broadcast_cooldown"), 0), TimeUnit.SECONDS, 125);
     }
 }

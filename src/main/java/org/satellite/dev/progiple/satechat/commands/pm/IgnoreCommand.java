@@ -24,7 +24,7 @@ public class IgnoreCommand implements TabExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
         if (strings.length == 0 || !(sender instanceof Player player)) {
-            Config.sendMessage(sender, "usage.satechat");
+            Config.sendMessage(sender, "usage.ignore");
             return true;
         }
 
@@ -58,7 +58,7 @@ public class IgnoreCommand implements TabExecutor {
 
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
-        if (strings.length != 1) return List.of();
+        if (strings.length != 1) return null;
 
         List<String> tab = new ArrayList<>(Bukkit.getOnlinePlayers().stream().map(Player::getName).toList());
         tab.add("all");

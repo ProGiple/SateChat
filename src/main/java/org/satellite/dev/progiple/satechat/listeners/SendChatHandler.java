@@ -23,17 +23,14 @@ public class SendChatHandler implements Listener {
         String message = e.getMessage();
         if (message.isEmpty()) return;
 
-        RawChat chat = ChatManager.getChat(message.charAt(0));
+        RawChat chat = ChatManager.getChat(message.charAt(0)).orElse(ChatManager.getChat());
         if (chat == null) {
             Config.sendMessage(player, "chatNotExists");
             return;
         }
 
         IChatUser chatUser = ChatUserManager.get(player.getUniqueId());
-        if (chat.isBlocked(chatUser)) {
-            Config.sendMessage(player, "chatIsBlocked", "id-%-" + chat.getSettings().getId());
-            return;
-        }
+        if (chat.isBlocked(chatUser)) return;
 
         SendChatEvent sendChatEvent = new SendChatEvent(player, chatUser, chat, message);
         Bukkit.getPluginManager().callEvent(sendChatEvent);

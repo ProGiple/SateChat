@@ -30,6 +30,10 @@ public class Config {
         config.sendMessage(sender, id, rpl);
     }
 
+    public void sendMessage(String messId, CommandSender sender, String id, String... rpl) {
+        config.sendMessage(messId, sender, id, rpl);
+    }
+
     public int getInt(String path) {
         return config.getInt(path);
     }

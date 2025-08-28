@@ -42,7 +42,7 @@ public class PrivateManager {
         message = Tools.swearReplacement(sender, message);
         message = Tools.useColor(sender, message);
         message = Tools.replacementWords(sender, message);
-        message = Tools.replacementCommands(message);
+        message = Tools.replacementCommands(message, false);
 
         PrivateMessagingEvent privateMessagingEvent = new PrivateMessagingEvent(senderUser, recipientUser);
         privateMessagingEvent.setMessage(message);

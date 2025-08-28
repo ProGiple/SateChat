@@ -1,7 +1,6 @@
 package org.satellite.dev.progiple.satechat;
 
 import lombok.Getter;
-import org.novasparkle.lunaspring.API.commands.LunaExecutor;
 import org.novasparkle.lunaspring.LunaPlugin;
 import org.satellite.dev.progiple.satechat.chats.state.ChatManager;
 import org.satellite.dev.progiple.satechat.commands.broadcast.BroadCastCommand;
@@ -35,9 +34,8 @@ public final class SateChat extends LunaPlugin {
         ReplacementsConfig.setReplacementsConfig(new ReplacementsConfig(Config.getString("replacement_words.file")));
 
         BroadCastCommand.setCdPrevent();
-        this.processCommands("org.satellite.dev.progiple.satechat.commands");
 
-        LunaExecutor.initialize(this, "org.satellite.dev.progiple.satechat.commands");
+        this.processCommands("#.commands");
         this.registerListeners(new LeaveJoinHandler(), new SendChatHandler());
 
         AutoMessager.resetSettings();
@@ -47,7 +45,7 @@ public final class SateChat extends LunaPlugin {
 
     @Override
     public void onDisable() {
-        this.autoMessager.cancel();
+        if (this.autoMessager != null) this.autoMessager.cancel();
         super.onDisable();
     }
 }

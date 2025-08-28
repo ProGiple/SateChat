@@ -64,22 +64,23 @@ public class Tools {
         List<String> swears = config.getList();
         SwearsConfig.Mode mode = config.getMode();
 
-        String normalized = config.disableTranslates() ? Translit.process(message) : message;
-
         boolean hasOne = false;
-        for (String part : normalized.split(" ")) {
-            String cleanedString = part.replaceAll("[a-zA-Z0-9]", "");
-            for (String swear : swears) {
-                if (swear.contains(cleanedString) || swear.contains(part)) {
-                    String replacement = switch (mode) {
-                        case FULL -> "*".repeat(swear.length());
-                        case FUNTIME -> swear.charAt(0) + "*" + swear.charAt(swear.length() - 1);
-                        case ONLY_END -> "*".repeat(swear.length() - 1) + swear.charAt(swear.length() - 1);
-                        case ONLY_START -> swear.charAt(0) + "*".repeat(swear.length() - 1);
-                        case START_WITH_END -> swear.charAt(0) + "*".repeat(Math.max(swear.length() - 2, 0)) + swear.charAt(swear.length() - 1);
-                    };
+        for (String part : message.split(" ")) {
+            String lowed = part.toLowerCase();
+            String transliteLowed = Translit.process(lowed);
 
-                    normalized = normalized.replace(part, replacement);
+            String cleanedString = part.replaceAll("[^a-zA-Zа-яА-ЯёЁ]", "");
+            String cleanedLowed = cleanedString.toLowerCase();
+            String transliteCleaned = Translit.process(cleanedLowed);
+            for (String swear : swears) {
+                if (lowed.contains(swear) || transliteLowed.contains(swear)) {
+                    message = message.replace(part, mode.replace(part));
+                    hasOne = true;
+                    continue;
+                }
+
+                if (!cleanedLowed.isEmpty() && (cleanedLowed.contains(swear) || transliteCleaned.contains(swear))) {
+                    message = message.replace(part, mode.replace(cleanedString));
                     hasOne = true;
                 }
             }
@@ -92,7 +93,7 @@ public class Tools {
             }, 2L);
         }
 
-        return normalized;
+        return message;
     }
 
     public boolean capsBlock(CommandSender sender, String message) {
@@ -155,14 +156,14 @@ public class Tools {
         return ColorManager.color(Objects.requireNonNull(rplSection.getString(key + ".replacement")));
     }
 
-    public String replacementCommands(String message) {
+    public String replacementCommands(String message, boolean isClickable) {
         ConfigurationSection section = Config.getSection("command_replacements");
         if (!section.getBoolean("enable")) return message;
 
-        String format = section.getString("format");
+        String format = section.getString(isClickable ? "clickable_format" : "format");
         if (format == null || format.isEmpty()) return message;
 
-        format = ColorManager.color(format);
+        if (!isClickable) format = ColorManager.color(format);
 
         Pattern pattern = Pattern.compile("(?<!\\S)/(\\w+)");
         Matcher matcher = pattern.matcher(message);

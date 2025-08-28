@@ -3,6 +3,10 @@ package org.satellite.dev.progiple.satechat.chats.state;
 import lombok.Getter;
 import lombok.experimental.UtilityClass;
 import org.bukkit.configuration.ConfigurationSection;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.novasparkle.lunaspring.API.util.utilities.Utils;
+import org.novasparkle.lunaspring.LunaPlugin;
 import org.satellite.dev.progiple.satechat.SateChat;
 import org.satellite.dev.progiple.satechat.chats.Chat;
 import org.satellite.dev.progiple.satechat.chats.ChatSettings;
@@ -10,7 +14,9 @@ import org.satellite.dev.progiple.satechat.chats.RawChat;
 import org.satellite.dev.progiple.satechat.configs.Config;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 
 @UtilityClass
 public class ChatManager {
@@ -35,23 +41,19 @@ public class ChatManager {
                         new Chat(SateChat.getINSTANCE(), new ChatSettings((ConfigurationSection) v))));
     }
 
-    public RawChat getChat(String id) {
-        return chats
-                .stream()
-                .filter(c -> c.getSettings().getId().equalsIgnoreCase(id))
-                .findFirst()
-                .orElse(null);
+    public @NotNull Optional<RawChat> getChat(String id) {
+        return Utils.find(chats, c -> c.getSettings().getId().equalsIgnoreCase(id));
     }
 
-    public RawChat getChat(char symbol) {
-        return chats
-                .stream()
-                .filter(c -> c.getSettings().getSymbol() == symbol)
-                .findFirst()
-                .orElse(getChat());
+    public @NotNull Optional<RawChat> getChat(char symbol) {
+        return Utils.find(chats, c -> c.getSettings().getSymbol() == symbol);
     }
 
-    public RawChat getChat() {
+    public Stream<RawChat> getChats(LunaPlugin lunaPlugin) {
+        return chats.stream().filter(c -> c.getPlugin().equals(lunaPlugin));
+    }
+
+    public @Nullable RawChat getChat() {
         return chats
                 .stream()
                 .filter(c -> c.getSettings().getSymbol() == ' ' || String.valueOf(c.getSettings().getSymbol()).isEmpty())

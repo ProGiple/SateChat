@@ -1,7 +1,6 @@
 package org.satellite.dev.progiple.satechat;
 
 import lombok.Getter;
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.novasparkle.lunaspring.API.util.utilities.LunaMath;
@@ -16,6 +15,7 @@ public class AutoMessager extends BukkitRunnable {
     @Getter private static int messageTime;
 
     private int seconds = 0;
+    private String beforeId;
 
     @Override
     public void run() {
@@ -30,14 +30,21 @@ public class AutoMessager extends BukkitRunnable {
         List<String> keys = new ArrayList<>(messages.getKeys(false));
         if (keys.isEmpty()) return;
 
-        String messageId = keys.get(LunaMath.getRandomInt(0, keys.size()));
-        Bukkit.getScheduler().runTask(SateChat.getINSTANCE(), () -> Utils.playersAction(p -> {
-            if (!Tools.hasBypassPermission(p, "automessages")) Config.sendMessage(p, "auto_messages." + messageId);
-        }));
+        String messageId;
+        if (keys.size() == 1) messageId = keys.get(0);
+        else {
+            keys.remove(this.beforeId);
+            messageId = keys.get(LunaMath.getRandomInt(0, keys.size()));
+        }
+
+        this.beforeId = messageId;
+        Utils.playersAction(p -> {
+            if (!Tools.hasBypassPermission(p, "automessages")) Config.sendMessage("auto_messages", p, messageId);
+        });
     }
 
     public static void resetSettings() {
-        messages = Config.getSection("messages.auto_messages");
+        messages = Config.getSection("auto_messages");
         messageTime = Config.getInt("auto_messages_time");
     }
 }

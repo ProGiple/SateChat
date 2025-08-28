@@ -17,7 +17,7 @@ import org.satellite.dev.progiple.satechat.users.IChatUser;
 
 import java.util.List;
 
-@LunaCommand(value = "privatemessage")
+@LunaCommand("privatemessage")
 public class PMCommand implements TabExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
@@ -44,7 +44,7 @@ public class PMCommand implements TabExecutor {
     }
 
     @Override
-    public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
-        return strings.length == 1 ? Utils.getPlayerNicks(strings[0]) : (strings.length == 2 ? List.of("<message>") : List.of());
+    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
+        return strings.length == 1 ? Utils.getPlayerNicks(strings[0]) : (strings.length == 2 ? List.of("<message>") : null);
     }
 }

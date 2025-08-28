@@ -6,7 +6,7 @@
 
   <groupId>org.satellite.dev.progiple</groupId>
   <artifactId>SateChat</artifactId>
-  <version>1.0.9</version>
+  <version>1.0.14</version>
   <packaging>jar</packaging>
 
   <name>SateChat</name>
@@ -84,7 +84,7 @@
       <dependency>
           <groupId>com.github.NovaSparkle</groupId>
           <artifactId>LunaSpring</artifactId>
-          <version>3.5.19f</version>
+          <version>3.6.3</version>
           <scope>provided</scope>
       </dependency>
       <dependency>

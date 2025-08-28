@@ -1,8 +1,14 @@
 package org.satellite.dev.progiple.satechat.chats;
 
 import lombok.*;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.novasparkle.lunaspring.API.util.utilities.Utils;
+
+import java.util.Collection;
+import java.util.function.Function;
 
 @AllArgsConstructor
 @Builder
@@ -13,7 +19,10 @@ public class ChatSettings {
     private @NotNull String format;
     private char symbol;
     private int range;
+    private boolean clickable;
     private final int cooldownTicks;
+    private GlobalType globalType = GlobalType.ALL_WORLDS;
+
     public ChatSettings(ConfigurationSection section) {
         this.id = section.getName();
         this.range = section.getKeys(false).contains("range") ? section.getInt("range") : -1;
@@ -25,6 +34,8 @@ public class ChatSettings {
         this.symbol = symbol != null && !symbol.isEmpty() ? symbol.charAt(0) : ' ';
 
         this.cooldownTicks = section.getKeys(false).contains("cooldownTicks") ? section.getInt("cooldownTicks") : 0;
+        this.clickable = section.getBoolean("clickable");
+        this.globalType = Utils.getEnumValue(GlobalType.class, section.getString("range_type"), GlobalType.ALL_WORLDS);
     }
 
     public ChatSettings duplicate() {
@@ -34,6 +45,16 @@ public class ChatSettings {
                 .symbol(this.symbol)
                 .cooldownTicks(this.cooldownTicks)
                 .range(this.range)
+                .clickable(this.clickable)
+                .globalType(this.globalType)
                 .build();
+    }
+
+    @RequiredArgsConstructor @Getter
+    public enum GlobalType {
+        ALL_WORLDS(p -> Bukkit.getWorlds().stream().flatMap(w -> w.getPlayers().stream()).toList()),
+        IN_TARGET_WORLD(p -> p.getWorld().getPlayers());
+
+        private final Function<Player, Collection<Player>> list;
     }
 }

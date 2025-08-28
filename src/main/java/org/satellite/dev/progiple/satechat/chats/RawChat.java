@@ -19,7 +19,7 @@ public abstract class RawChat implements Cloneable {
     public RawChat(LunaPlugin plugin, ChatSettings settings) {
         this.plugin = plugin;
         this.settings = settings;
-        this.cooldownPrevent = new CooldownPrevent<>(settings.getCooldownTicks() * 50);
+        this.cooldownPrevent = new CooldownPrevent<>(Math.max(settings.getCooldownTicks() * 50, 0));
     }
 
     public abstract boolean sendMessage(IChatUser sender, final String rawMessage);

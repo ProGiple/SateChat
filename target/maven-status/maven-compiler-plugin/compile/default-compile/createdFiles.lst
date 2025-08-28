@@ -1,4 +1,5 @@
 org\satellite\dev\progiple\satechat\listeners\LeaveJoinHandler.class
+org\satellite\dev\progiple\satechat\commands\another\SateChatCommand.class
 org\satellite\dev\progiple\satechat\listeners\SendChatHandler.class
 org\satellite\dev\progiple\satechat\chats\Chat.class
 org\satellite\dev\progiple\satechat\SateChat.class
@@ -8,6 +9,7 @@ org\satellite\dev\progiple\satechat\configs\SwearsConfig.class
 org\satellite\dev\progiple\satechat\chats\state\ChatManager.class
 org\satellite\dev\progiple\satechat\users\component\ICreationComponent.class
 org\satellite\dev\progiple\satechat\listeners\event\PrivateMessagingEvent.class
+org\satellite\dev\progiple\satechat\chats\ChatSettings$GlobalType.class
 org\satellite\dev\progiple\satechat\chats\RawChat.class
 org\satellite\dev\progiple\satechat\Tools.class
 org\satellite\dev\progiple\satechat\chats\state\PrivateManager.class
@@ -17,14 +19,11 @@ org\satellite\dev\progiple\satechat\chats\ChatSettings$ChatSettingsBuilder.class
 org\satellite\dev\progiple\satechat\listeners\event\SendChatEvent.class
 org\satellite\dev\progiple\satechat\configs\ReplacementsConfig.class
 org\satellite\dev\progiple\satechat\chats\ChatSettings.class
-org\satellite\dev\progiple\satechat\commands\SpySubCommand.class
 org\satellite\dev\progiple\satechat\commands\broadcast\BroadCastCommand.class
 org\satellite\dev\progiple\satechat\listeners\event\BroadcastCommandEvent.class
 org\satellite\dev\progiple\satechat\Translit.class
 org\satellite\dev\progiple\satechat\users\ChatUserManager.class
-org\satellite\dev\progiple\satechat\Tools$1.class
 org\satellite\dev\progiple\satechat\commands\pm\ReplyCommand.class
-org\satellite\dev\progiple\satechat\commands\ReloadSubCommand.class
 org\satellite\dev\progiple\satechat\configs\DataConfig.class
 org\satellite\dev\progiple\satechat\commands\pm\IgnoreCommand.class
 org\satellite\dev\progiple\satechat\configs\SwearsConfig$Mode.class
