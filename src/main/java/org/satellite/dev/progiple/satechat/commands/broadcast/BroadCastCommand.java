@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.novasparkle.lunaspring.API.commands.annotations.LunaCommand;
 import org.novasparkle.lunaspring.API.events.CooldownPrevent;
+import org.novasparkle.lunaspring.API.util.utilities.LunaMath;
 import org.satellite.dev.progiple.satechat.Tools;
 import org.satellite.dev.progiple.satechat.configs.Config;
 import org.satellite.dev.progiple.satechat.listeners.event.BroadcastCommandEvent;
@@ -32,8 +33,8 @@ public class BroadCastCommand implements TabExecutor {
         }
 
         if ((!Tools.hasBypassPermission(commandSender, "cooldown") && cd.isCancelled(null, commandSender))) {
-            long value = cd.getCache().get(commandSender, k -> 0L);
-            Config.sendMessage(commandSender, "chatCooldown", String.valueOf((value - System.currentTimeMillis()) / 1000L));
+            long value = cd.getRemaining(commandSender);
+            Config.sendMessage(commandSender, "chatCooldown", String.valueOf(LunaMath.round((double) value / 1000L, 1)));
             return true;
         }
 

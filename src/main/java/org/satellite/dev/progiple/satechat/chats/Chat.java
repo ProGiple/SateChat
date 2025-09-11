@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import org.novasparkle.lunaspring.API.util.service.managers.ColorManager;
 import org.novasparkle.lunaspring.API.util.utilities.AnnounceUtils;
 import org.novasparkle.lunaspring.API.util.utilities.ComponentUtils;
+import org.novasparkle.lunaspring.API.util.utilities.LunaMath;
 import org.novasparkle.lunaspring.API.util.utilities.Utils;
 import org.novasparkle.lunaspring.LunaPlugin;
 import org.satellite.dev.progiple.satechat.SateChat;
@@ -37,8 +38,8 @@ public class Chat extends RawChat {
                 || Tools.capsBlock(player, starterMessage)) return false;
 
         if ((!Tools.hasBypassPermission(player, "cooldown") && this.getCooldownPrevent().isCancelled(null, sender))) {
-            long value = this.getCooldownPrevent().getCache().get(sender, s -> 0L);
-            Config.sendMessage(player, "chatCooldown", String.valueOf((value - System.currentTimeMillis()) / 1000L));
+            long value = this.getCooldownPrevent().getRemaining(sender);
+            Config.sendMessage(player, "chatCooldown", String.valueOf(LunaMath.round((double) value / 1000L, 1)));
             return false;
         }
 
@@ -96,11 +97,11 @@ public class Chat extends RawChat {
         Player player = sender.getPlayer();
         if (player == null) return null;
 
-        Collection<Player> players = player.getWorld().getPlayers();
+        Collection<Player> players = this.getSettings().getGlobalType().getList().apply(player);
         if (this.getSettings().getRange() > 0) {
             return players
                     .stream()
-                    .filter(p -> p.getLocation().distance(player.getLocation()) <= this.getSettings().getRange())
+                    .filter(p -> p.getWorld().equals(player.getWorld()) && p.getLocation().distance(player.getLocation()) <= this.getSettings().getRange())
                     .collect(Collectors.toList());
         } else return players;
     }
