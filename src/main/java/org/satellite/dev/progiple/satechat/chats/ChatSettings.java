@@ -21,14 +21,17 @@ public class ChatSettings {
     private int range;
     private boolean clickable;
     private final int cooldownTicks;
-    private GlobalType globalType = GlobalType.ALL_WORLDS;
-
+    private GlobalType globalType;
+    private String logger;
     public ChatSettings(ConfigurationSection section) {
         this.id = section.getName();
         this.range = section.getKeys(false).contains("range") ? section.getInt("range") : -1;
 
         String format = section.getString("format");
         this.format = format != null && !format.isEmpty() ? format : "%player_name% -> {message}";
+
+        String logger = section.getString("logger");
+        this.logger = logger != null && !logger.isEmpty() ? logger : this.format;
 
         String symbol = section.getString("symbol");
         this.symbol = symbol != null && !symbol.isEmpty() ? symbol.charAt(0) : ' ';
@@ -47,6 +50,7 @@ public class ChatSettings {
                 .range(this.range)
                 .clickable(this.clickable)
                 .globalType(this.globalType)
+                .logger(this.logger)
                 .build();
     }
 

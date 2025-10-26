@@ -1,6 +1,5 @@
 package org.satellite.dev.progiple.satechat.commands.pm;
 
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -8,6 +7,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.novasparkle.lunaspring.API.commands.annotations.LunaCommand;
+import org.novasparkle.lunaspring.API.util.service.managers.VanishManager;
 import org.novasparkle.lunaspring.API.util.utilities.Utils;
 import org.satellite.dev.progiple.satechat.Tools;
 import org.satellite.dev.progiple.satechat.chats.state.PrivateManager;
@@ -31,8 +31,8 @@ public class PMCommand implements TabExecutor {
             return true;
         }
 
-        Player target = Bukkit.getPlayer(strings[0]);
-        if (target == null || !target.isOnline()) {
+        Player target = VanishManager.exact(strings[0]);
+        if (target == null) {
             Config.sendMessage(commandSender, "playerIsOffline", strings[0]);
             return true;
         }

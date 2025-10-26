@@ -3,9 +3,9 @@ package org.satellite.dev.progiple.satechat.chats.state;
 import lombok.Getter;
 import lombok.experimental.UtilityClass;
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.novasparkle.lunaspring.API.util.service.managers.VanishManager;
 import org.satellite.dev.progiple.satechat.Tools;
 import org.satellite.dev.progiple.satechat.configs.Config;
 import org.satellite.dev.progiple.satechat.listeners.event.PrivateMessagingEvent;
@@ -27,9 +27,10 @@ public class PrivateManager {
             return;
         }
 
-        OfflinePlayer recipient = Bukkit.getOfflinePlayer(recipientUser.getUUID());
-        if (!recipient.isOnline()) {
-            Config.sendMessage(sender, "playerIsOffline", "player-%-" + recipient.getName());
+        Player recipient = VanishManager.exact(recipientUser.getUUID());
+        if (recipient == null || !recipient.isOnline()) {
+            String name = recipient == null ? "NoData" : recipient.getName();
+            Config.sendMessage(sender, "playerIsOffline", "player-%-" + name);
             return;
         }
 
@@ -54,10 +55,10 @@ public class PrivateManager {
         String[] replacements = {"sender-%-" + sender.getName(), "recipient-%-" + recipient.getName(), "message-%-" + message};
 
         Config.sendMessage(sender, "private_messages.fromMe", replacements);
-        Config.sendMessage((Player) recipient, "private_messages.toMe", replacements);
+        Config.sendMessage(recipient, "private_messages.toMe", replacements);
         replies.put(recipientUser, senderUser);
 
-        if (Tools.hasBypassPermission(sender, "spy") || Tools.hasBypassPermission((Player) recipient, "spy")) return;
+        if (Tools.hasBypassPermission(sender, "spy") || Tools.hasBypassPermission(recipient, "spy")) return;
         for (Player spyPlayer : getSpyPlayers(senderUser, recipientUser)) {
             Config.sendMessage(spyPlayer, "spy.format",
                     "sender-%-" + sender.getName(),

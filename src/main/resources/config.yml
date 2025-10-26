@@ -2,12 +2,14 @@ chats:
   local:
     enable: true
     format: '&8▸&r %luckperms_prefix%&r%player_displayname%&r &8› &f[message]'
+    logger: '{S}[sender] &f› [message]'
     range: 150
     clickable: true
     cooldownTicks: -1
   global:
     enable: false
     format: '{S}▸&r %luckperms_prefix%&r%player_displayname%&r {S}› &f[message]'
+    logger: '{S}[sender] › &f[message]'
     range: -1
     range_type: ALL_WORLDS
     symbol: '!'
@@ -45,6 +47,7 @@ replacement_words:
   enable: true
   file: blocks/replacements.yml # path to file
 messages:
+  console: 'Консоль'
   reload:
     - "&aПлагин перезагружен!"
   noPermission:

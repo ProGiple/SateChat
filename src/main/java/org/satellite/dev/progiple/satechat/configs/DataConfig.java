@@ -14,7 +14,7 @@ public class DataConfig {
     public DataConfig(UUID uuid) {
         this.uuid = uuid;
 
-        this.config = new Configuration(SateChat.getINSTANCE().getDataFolder(), String.format("data/%s.yml", uuid.toString()));
+        this.config = new Configuration(SateChat.getINSTANCE().getDataFolder(), String.format("data/%s", uuid.toString()));
         if (this.config.getFile().exists()) return;
 
         this.config.setBoolean("spy_mode", false);

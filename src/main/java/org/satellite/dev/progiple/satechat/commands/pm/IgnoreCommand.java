@@ -14,7 +14,6 @@ import org.satellite.dev.progiple.satechat.configs.Config;
 import org.satellite.dev.progiple.satechat.users.ChatUserManager;
 import org.satellite.dev.progiple.satechat.users.IChatUser;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @LunaCommand("ignore")
@@ -41,7 +40,7 @@ public class IgnoreCommand implements TabExecutor {
         }
 
         Player target = Bukkit.getPlayer(strings[0]);
-        if (target == null || !target.isOnline()) {
+        if (target == null) {
             Config.sendMessage(player, "playerIsOffline", "player-%-" + strings[0]);
             return true;
         }
@@ -60,8 +59,8 @@ public class IgnoreCommand implements TabExecutor {
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
         if (strings.length != 1) return null;
 
-        List<String> tab = new ArrayList<>(Bukkit.getOnlinePlayers().stream().map(Player::getName).toList());
+        List<String> tab = Utils.getPlayerNicks(strings[0]);
         tab.add("all");
-        return Utils.tabCompleterFiltering(tab, strings[0]);
+        return tab;
     }
 }

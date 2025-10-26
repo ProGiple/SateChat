@@ -68,7 +68,10 @@ public class Chat extends RawChat {
             if (this.hasMention(p, starterMessage)) AnnounceUtils.sound(p, strSound);
         });
 
-        SateChat.getINSTANCE().getLogger().log(Level.INFO, endedMessage);
+        String logging = Utils.setPlaceholders(player, this.getSettings().getLogger()
+                .replace("[sender]", player.getName())
+                .replace("[message]",message));
+        SateChat.getINSTANCE().getLogger().log(Level.INFO, logging);
         return true;
     }
 
