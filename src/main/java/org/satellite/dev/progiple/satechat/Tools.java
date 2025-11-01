@@ -11,9 +11,8 @@ import org.satellite.dev.progiple.satechat.configs.Config;
 import org.satellite.dev.progiple.satechat.configs.ReplacementsConfig;
 import org.satellite.dev.progiple.satechat.configs.SwearsConfig;
 
-import java.util.Arrays;
+import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,14 +27,12 @@ public class Tools {
     }
 
     public String useColor(CommandSender sender, String message) {
-        if (!Tools.hasPermission(sender, "satechat.useColor")) message = ChatColor.stripColor(message);
+        if (!Tools.hasPermission(sender, "satechat.useColor")) return ChatColor.stripColor(message);
         return ColorManager.color(message);
     }
 
     public void dispatch(List<String> commands, String senderName) {
-        commands.forEach(l -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), l
-                .replace("{sender}", senderName)
-                .replace("[sender]", senderName)));
+        commands.forEach(l -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), l.replace("[sender]", senderName)));
     }
 
     public boolean spamBlock(String latestMessage, CommandSender sender, String isMessage) {
@@ -52,108 +49,64 @@ public class Tools {
         return false;
     }
 
-    public String swearReplacement(CommandSender sender, String message) {
-        if (Tools.hasBypassPermission(sender, "swears")) return message;
+//    public String swearReplacement(CommandSender sender, String message) {
+//        if (Tools.hasBypassPermission(sender, "swears")) return message;
+//
+//        ConfigurationSection section = Config.getSection("swear_block");
+//        if (!section.getBoolean("enable")) return message;
+//
+//        List<String> swears = SwearsConfig.getList();
+//        SwearsConfig.Mode mode = SwearsConfig.getMode();
+//
+//        boolean hasOne = false;
+//        for (String part : message.split(" ")) {
+//            String lowed = part.toLowerCase();
+//            String transliteLowed = Translit.process(lowed);
+//
+//            String cleanedString = part.replaceAll("[^a-zA-Zа-яА-ЯёЁ]", "");
+//            String cleanedLowed = cleanedString.toLowerCase();
+//            String transliteCleaned = Translit.process(cleanedLowed);
+//            for (String swear : swears) {
+//                if (lowed.contains(swear) || transliteLowed.contains(swear)) {
+//                    message = message.replace(part, mode.replace(part));
+//                    hasOne = true;
+//                    continue;
+//                }
+//
+//                if (!cleanedLowed.isEmpty() && (cleanedLowed.contains(swear) || transliteCleaned.contains(swear))) {
+//                    message = message.replace(part, mode.replace(cleanedString));
+//                    hasOne = true;
+//                }
+//            }
+//        }
+//
+//        if (hasOne) {
+//            Bukkit.getScheduler().runTaskLater(SateChat.getINSTANCE(), () -> {
+//                Config.sendMessage(sender, "swear_warn");
+//                Tools.dispatch(section.getStringList("commands"), sender.getName());
+//            }, 2L);
+//        }
+//
+//        return message;
+//    }
 
-        ConfigurationSection section = Config.getSection("swear_block");
-        if (!section.getBoolean("enable")) return message;
+    public String capsBlock(CommandSender sender, String message) {
+        if (Tools.hasBypassPermission(sender, "caps")) return message;
 
-        SwearsConfig config = SwearsConfig.get();
-        if (config == null) return message;
-        
-        List<String> swears = config.getList();
-        SwearsConfig.Mode mode = config.getMode();
+        ConfigurationSection section = Config.getSection("caps_block");
+        if (!section.getBoolean("enable") || message.length() < section.getInt("min_letters_for_check")) return message;
 
-        boolean hasOne = false;
-        for (String part : message.split(" ")) {
-            String lowed = part.toLowerCase();
-            String transliteLowed = Translit.process(lowed);
+        double percent = (double) section.getInt("min_caps_letter_percent") / 100;
+        String checkedMessage = ChatColor.stripColor(message.replace(" ", ""));
+        if ((double) checkedMessage.chars().filter(Character::isUpperCase).count() / checkedMessage.length() >= percent) {
+            Config.sendMessage(sender, "caps_warn");
+            Tools.dispatch(section.getStringList("commands"), sender.getName());
 
-            String cleanedString = part.replaceAll("[^a-zA-Zа-яА-ЯёЁ]", "");
-            String cleanedLowed = cleanedString.toLowerCase();
-            String transliteCleaned = Translit.process(cleanedLowed);
-            for (String swear : swears) {
-                if (lowed.contains(swear) || transliteLowed.contains(swear)) {
-                    message = message.replace(part, mode.replace(part));
-                    hasOne = true;
-                    continue;
-                }
-
-                if (!cleanedLowed.isEmpty() && (cleanedLowed.contains(swear) || transliteCleaned.contains(swear))) {
-                    message = message.replace(part, mode.replace(cleanedString));
-                    hasOne = true;
-                }
-            }
-        }
-
-        if (hasOne) {
-            Bukkit.getScheduler().runTaskLater(SateChat.getINSTANCE(), () -> {
-                Config.sendMessage(sender, "swear_warn");
-                Tools.dispatch(section.getStringList("commands"), sender.getName());
-            }, 2L);
+            boolean fullBlockSend = section.getBoolean("full_block_send");
+            return fullBlockSend ? null : message.toLowerCase();
         }
 
         return message;
-    }
-
-    public boolean capsBlock(CommandSender sender, String message) {
-        if (Tools.hasBypassPermission(sender, "caps")) return false;
-
-        ConfigurationSection section = Config.getSection("caps_block");
-        if (!section.getBoolean("enable") || message.length() < section.getInt("min_letters_for_check")) return false;
-
-        double percent = (double) section.getInt("min_caps_letter_percent") / 100;
-        message = ChatColor.stripColor(message.replace(" ", ""));
-        if ((double) message.chars().filter(Character::isUpperCase).count() / message.length() >= percent) {
-            Config.sendMessage(sender, "caps_warn");
-            Tools.dispatch(section.getStringList("commands"), sender.getName());
-            return true;
-        }
-        return false;
-    }
-
-    public boolean adsBlocks(CommandSender sender, String message) {
-        if (Tools.hasBypassPermission(sender, "ads")) return false;
-
-        ConfigurationSection section = Config.getSection("advertisement_block");
-        if (!section.getBoolean("enable")) return false;
-
-        AdsConfig adsConfig = AdsConfig.get();
-        List<String> patterns = adsConfig.getFormats();
-
-        String checkedMessage = message;
-        for (String s : adsConfig.getWhitelist()) checkedMessage = checkedMessage.replace(s, "");
-
-        String finalCheckedMessage = checkedMessage;
-        if (patterns.stream().anyMatch(s -> Pattern.compile(s).matcher(finalCheckedMessage).find())) {
-            Config.sendMessage(sender, "ads_warn");
-            Tools.dispatch(section.getStringList("commands"), sender.getName());
-            return true;
-        }
-        return false;
-    }
-
-    public String replacementWords(CommandSender sender, String message) {
-        if (Tools.hasBypassPermission(sender, "replacements")) return message;
-
-        ConfigurationSection section = Config.getSection("replacement_words");
-        if (!section.contains("enable")) return message;
-
-        ReplacementsConfig rplConfig = ReplacementsConfig.get();
-        ConfigurationSection rplSection = rplConfig.getSection();
-
-        String finalNormalized = Translit.process(message);
-        String key = rplSection.getKeys(false)
-                .stream()
-                .filter(k -> {
-                    String[] split = Objects.requireNonNull(rplSection.getString(k + ".words")).split(", ");
-                    return Arrays.stream(split).anyMatch(w -> finalNormalized.toLowerCase().contains(w.toLowerCase()));
-                })
-                .findFirst()
-                .orElse(null);
-        if (key == null || key.isEmpty()) return message;
-
-        return ColorManager.color(Objects.requireNonNull(rplSection.getString(key + ".replacement")));
     }
 
     public String replacementCommands(String message, boolean isClickable) {
@@ -178,5 +131,24 @@ public class Tools {
         matcher.appendTail(result);
 
         return result.toString();
+    }
+
+    public boolean allBlocks(CommandSender sender, String starterMessage, @Nullable String latestMessage) {
+        return sender == null
+                || (latestMessage != null && Tools.spamBlock(latestMessage, sender, starterMessage))
+                || AdsConfig.block(sender, starterMessage) == null
+                || Tools.capsBlock(sender, starterMessage) == null;
+    }
+
+    public String allReplacements(CommandSender sender, String message, boolean isClickable) {
+        message = SwearsConfig.replace(sender, message);
+        message = ReplacementsConfig.replace(sender, message);
+        message = Tools.replacementCommands(message, isClickable);
+
+        String adsReplacer = AdsConfig.block(sender, message);
+        message = adsReplacer == null ? message : adsReplacer;
+
+        String capsReplacer = Tools.capsBlock(sender, message);
+        return capsReplacer == null ? message : capsReplacer;
     }
 }

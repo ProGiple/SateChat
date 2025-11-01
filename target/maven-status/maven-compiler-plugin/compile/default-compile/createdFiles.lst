@@ -3,6 +3,7 @@ org\satellite\dev\progiple\satechat\commands\another\SateChatCommand.class
 org\satellite\dev\progiple\satechat\listeners\SendChatHandler.class
 org\satellite\dev\progiple\satechat\chats\Chat.class
 org\satellite\dev\progiple\satechat\SateChat.class
+org\satellite\dev\progiple\satechat\listeners\event\AfterSendChatEvent.class
 org\satellite\dev\progiple\satechat\configs\AdsConfig.class
 org\satellite\dev\progiple\satechat\users\IChatUser.class
 org\satellite\dev\progiple\satechat\configs\SwearsConfig.class
@@ -24,6 +25,7 @@ org\satellite\dev\progiple\satechat\listeners\event\BroadcastCommandEvent.class
 org\satellite\dev\progiple\satechat\Translit.class
 org\satellite\dev\progiple\satechat\users\ChatUserManager.class
 org\satellite\dev\progiple\satechat\commands\pm\ReplyCommand.class
+org\satellite\dev\progiple\satechat\configs\AdsConfig$Mode.class
 org\satellite\dev\progiple\satechat\configs\DataConfig.class
 org\satellite\dev\progiple\satechat\commands\pm\IgnoreCommand.class
 org\satellite\dev\progiple\satechat\configs\SwearsConfig$Mode.class

@@ -49,9 +49,9 @@ public class SateChatCommand implements TabExecutor {
 
             Config.reload();
             ChatManager.reload();
-            ReplacementsConfig.get().reload();
-            SwearsConfig.get().reload();
-            AdsConfig.get().reload();
+            ReplacementsConfig.reload();
+            SwearsConfig.reload();
+            AdsConfig.reload();
             Config.sendMessage(sender, "reload");
         }
         return true;

@@ -5,7 +5,9 @@ import lombok.experimental.UtilityClass;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.novasparkle.lunaspring.API.events.CooldownPrevent;
 import org.novasparkle.lunaspring.API.util.service.managers.VanishManager;
+import org.novasparkle.lunaspring.API.util.utilities.LunaMath;
 import org.satellite.dev.progiple.satechat.Tools;
 import org.satellite.dev.progiple.satechat.configs.Config;
 import org.satellite.dev.progiple.satechat.listeners.event.PrivateMessagingEvent;
@@ -13,10 +15,16 @@ import org.satellite.dev.progiple.satechat.users.ChatUserManager;
 import org.satellite.dev.progiple.satechat.users.IChatUser;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @UtilityClass
 public class PrivateManager {
     @Getter private final Map<IChatUser, IChatUser> replies = new HashMap<>();
+    private CooldownPrevent<UUID> cooldown;
+
+    public void initializeCooldown() {
+        cooldown = new CooldownPrevent<>(Config.getInt("private_messages_cooldown_ticks") * 50L, TimeUnit.MILLISECONDS, 125);
+    }
 
     public void sendPrivate(@NotNull IChatUser senderUser, @NotNull IChatUser recipientUser, @NotNull String message) {
         Player sender = Bukkit.getPlayer(senderUser.getUUID());
@@ -39,19 +47,25 @@ public class PrivateManager {
             return;
         }
 
-        if (Tools.adsBlocks(sender, message) || Tools.capsBlock(sender, message)) return;
-        message = Tools.swearReplacement(sender, message);
-        message = Tools.useColor(sender, message);
-        message = Tools.replacementWords(sender, message);
-        message = Tools.replacementCommands(message, false);
+        if (cooldown.isCancelled(null, senderUser.getUUID())) {
+            long value = cooldown.getRemaining(senderUser.getUUID());
+            Config.sendMessage(sender, "chatCooldown", String.valueOf(LunaMath.round((double) value / 1000L, 1)));
+            return;
+        }
 
-        PrivateMessagingEvent privateMessagingEvent = new PrivateMessagingEvent(senderUser, recipientUser);
-        privateMessagingEvent.setMessage(message);
+        if (Tools.allBlocks(sender, message, null)) return;
+        message = Tools.allReplacements(sender, message, false);
 
-        Bukkit.getPluginManager().callEvent(privateMessagingEvent);
-        if (privateMessagingEvent.isCancelled()) return;
+        if (Config.useEvents()) {
+            PrivateMessagingEvent privateMessagingEvent = new PrivateMessagingEvent(senderUser, recipientUser);
+            privateMessagingEvent.setMessage(message);
 
-        message = privateMessagingEvent.getMessage();
+            Bukkit.getPluginManager().callEvent(privateMessagingEvent);
+            if (privateMessagingEvent.isCancelled()) return;
+
+            message = privateMessagingEvent.getMessage();
+        }
+
         String[] replacements = {"sender-%-" + sender.getName(), "recipient-%-" + recipient.getName(), "message-%-" + message};
 
         Config.sendMessage(sender, "private_messages.fromMe", replacements);

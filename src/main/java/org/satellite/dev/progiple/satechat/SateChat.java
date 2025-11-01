@@ -3,6 +3,7 @@ package org.satellite.dev.progiple.satechat;
 import lombok.Getter;
 import org.novasparkle.lunaspring.LunaPlugin;
 import org.satellite.dev.progiple.satechat.chats.state.ChatManager;
+import org.satellite.dev.progiple.satechat.chats.state.PrivateManager;
 import org.satellite.dev.progiple.satechat.commands.broadcast.BroadCastCommand;
 import org.satellite.dev.progiple.satechat.configs.AdsConfig;
 import org.satellite.dev.progiple.satechat.configs.Config;
@@ -11,8 +12,6 @@ import org.satellite.dev.progiple.satechat.configs.SwearsConfig;
 import org.satellite.dev.progiple.satechat.listeners.LeaveJoinHandler;
 import org.satellite.dev.progiple.satechat.listeners.SendChatHandler;
 
-import java.io.File;
-
 public final class SateChat extends LunaPlugin {
     @Getter private static SateChat INSTANCE;
     private AutoMessager autoMessager;
@@ -20,32 +19,41 @@ public final class SateChat extends LunaPlugin {
     @Override
     public void onEnable() {
         INSTANCE = this;
-        super.onEnable();
-        saveDefaultConfig();
 
-        File mainDir = new File(INSTANCE.getDataFolder(), "data/");
-        if (!mainDir.exists()) {
+        super.onEnable();
+        if (!INSTANCE.getDataFolder().exists()) {
             this.loadFiles("blocks/ads.yml", "blocks/swears.yml", "blocks/replacements.yml");
         }
 
+        saveDefaultConfig();
+        PrivateManager.initializeCooldown();
         ChatManager.reload();
-        AdsConfig.setAdsConfig(new AdsConfig(Config.getString("advertisement_block.file")));
-        SwearsConfig.setSwearsConfig(new SwearsConfig(Config.getString("swear_block.file")));
-        ReplacementsConfig.setReplacementsConfig(new ReplacementsConfig(Config.getString("replacement_words.file")));
+
+        AdsConfig.initialize(this);
+        SwearsConfig.initialize(this);
+        ReplacementsConfig.initialize(this);
 
         BroadCastCommand.setCdPrevent();
 
         this.processCommands("#.commands");
         this.registerListeners(new LeaveJoinHandler(), new SendChatHandler());
 
-        AutoMessager.resetSettings();
-        this.autoMessager = new AutoMessager();
-        this.autoMessager.runTaskTimerAsynchronously(SateChat.getINSTANCE(), 20L, 20L);
+        this.resetAutoMessager();
     }
 
     @Override
     public void onDisable() {
         if (this.autoMessager != null) this.autoMessager.cancel();
         super.onDisable();
+    }
+
+    public void resetAutoMessager() {
+        if (this.autoMessager != null) this.autoMessager.cancel();
+
+        long time = Config.getInt("auto_messages_time") * 20L;
+        if (time < 20L) return;
+
+        this.autoMessager = new AutoMessager();
+        this.autoMessager.runTaskTimerAsynchronously(this, time, time);
     }
 }

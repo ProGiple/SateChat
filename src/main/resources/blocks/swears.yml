@@ -1,8 +1,8 @@
-# START_WITH_END - замена блять в б***ь
-# FUNTIME - замена блять в б*ь
-# FULL - замена блять в *****
-# ONLY_START - замена блять в б****
-# ONLY_END - замена блять в ****ь
+# START_WITH_END - замена бл-ять в б***ь
+# FUNTIME - замена бл-ять в б*ь
+# FULL - замена бл-ять в *****
+# ONLY_START - замена бл-ять в б****
+# ONLY_END - замена бл-ять в ****ь
 replacement_mode: START_WITH_END
 list:
   - сука

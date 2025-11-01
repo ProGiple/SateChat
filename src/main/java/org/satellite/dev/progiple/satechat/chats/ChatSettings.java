@@ -10,10 +10,7 @@ import org.novasparkle.lunaspring.API.util.utilities.Utils;
 import java.util.Collection;
 import java.util.function.Function;
 
-@AllArgsConstructor
-@Builder
-@Getter
-@Setter
+@AllArgsConstructor @Builder @Getter @Setter
 public class ChatSettings {
     private @NotNull String id;
     private @NotNull String format;

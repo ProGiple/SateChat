@@ -1,3 +1,4 @@
+disable_events: false # Выключить ли обработку ивентов? (Не трогайте, если не знаете для чего это! Это может привести к поломке плагинов, которые используют ивенты SateChat)
 chats:
   local:
     enable: true
@@ -16,6 +17,7 @@ chats:
     clickable: true
     cooldownTicks: 40
 broadcast_cooldown: 30
+private_messages_cooldown_ticks: 60
 auto_messages_time: 90
 auto_messages: {}
 command_replacements:
@@ -33,19 +35,20 @@ spam_block:
 swear_block:
   enable: true
   commands: []
-  file: blocks/swears.yml # path to file
+  file: blocks/swears # path to file
 advertisement_block:
   enable: false
-  file: blocks/ads.yml # path to file
+  file: blocks/ads # path to file
   commands: []
 caps_block:
   enable: true
   min_letters_for_check: 12
   min_caps_letter_percent: 60
+  full_block_send: false # полностью ли блокировать отправку сообщения? Если стоит - false то будет произведена замена всех символов на нижний регистр
   commands: []
 replacement_words:
   enable: true
-  file: blocks/replacements.yml # path to file
+  file: blocks/replacements # path to file
 messages:
   console: 'Консоль'
   reload:

@@ -1,50 +1,46 @@
 package org.satellite.dev.progiple.satechat;
 
-import lombok.Getter;
+import com.google.common.collect.Lists;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.novasparkle.lunaspring.API.util.utilities.AnnounceUtils;
 import org.novasparkle.lunaspring.API.util.utilities.LunaMath;
 import org.novasparkle.lunaspring.API.util.utilities.Utils;
 import org.satellite.dev.progiple.satechat.configs.Config;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class AutoMessager extends BukkitRunnable {
-    @Getter private static ConfigurationSection messages;
-    @Getter private static int messageTime;
+    private final Set<String> beforeIds = new HashSet<>();
+    private final Map<String, List<String>> messages = new HashMap<>();
+    public AutoMessager() {
+        ConfigurationSection section = Config.getSection("auto_messages");
+        for (String key : section.getKeys(false)) {
+            List<String> list = Lists.newArrayList(section.getString(key));
+            if (list.isEmpty()) {
+                list.add(section.getString(key));
+            }
 
-    private int seconds = 0;
-    private String beforeId;
+            this.messages.put(key, list);
+        }
+    }
 
     @Override
     public void run() {
-        if (messages == null || messageTime <= 0) return;
-
-        if (this.seconds < messageTime) {
-            this.seconds++;
-            return;
-        }
-
-        this.seconds = 0;
-        List<String> keys = new ArrayList<>(messages.getKeys(false));
+        List<String> keys = new ArrayList<>(this.messages.keySet());
         if (keys.isEmpty()) return;
 
         String messageId;
         if (keys.size() == 1) messageId = keys.get(0);
         else {
-            keys.remove(this.beforeId);
+            if (keys.size() <= this.beforeIds.size()) this.beforeIds.clear();
+            else keys.removeAll(this.beforeIds);
             messageId = keys.get(LunaMath.getRandomInt(0, keys.size()));
         }
 
-        this.beforeId = messageId;
+        this.beforeIds.add(messageId);
         Utils.playersAction(p -> {
-            if (!Tools.hasBypassPermission(p, "automessages")) Config.sendMessage("auto_messages", p, messageId);
+            if (!Tools.hasBypassPermission(p, "automessages")) AnnounceUtils.sendMessage(p, this.messages.get(messageId));
         });
-    }
-
-    public static void resetSettings() {
-        messages = Config.getSection("auto_messages");
-        messageTime = Config.getInt("auto_messages_time");
     }
 }

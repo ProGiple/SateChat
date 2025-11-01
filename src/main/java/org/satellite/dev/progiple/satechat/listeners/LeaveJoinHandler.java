@@ -6,6 +6,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.novasparkle.lunaspring.API.util.utilities.Runnable;
+import org.satellite.dev.progiple.satechat.SateChat;
 import org.satellite.dev.progiple.satechat.configs.Config;
 import org.satellite.dev.progiple.satechat.users.ChatUserManager;
 
@@ -14,11 +16,15 @@ import java.util.UUID;
 public class LeaveJoinHandler implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
-        this.broadcastNotifier(e.getPlayer(), "onJoin");
         e.joinMessage(null);
+        Player player = e.getPlayer();
 
-        UUID uuid = e.getPlayer().getUniqueId();
+        UUID uuid = player.getUniqueId();
         if (!ChatUserManager.contains(uuid)) ChatUserManager.create(uuid);
+
+        Runnable.start(() -> {
+            this.broadcastNotifier(player, "onJoin");
+        }).runTaskLaterAsynchronously(SateChat.getINSTANCE(), 10L);
     }
 
     @EventHandler

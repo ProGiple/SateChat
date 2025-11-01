@@ -32,10 +32,13 @@ public class SendChatHandler implements Listener {
         IChatUser chatUser = ChatUserManager.get(player.getUniqueId());
         if (chat.isBlocked(chatUser)) return;
 
-        SendChatEvent sendChatEvent = new SendChatEvent(player, chatUser, chat, message);
-        Bukkit.getPluginManager().callEvent(sendChatEvent);
-        if (!sendChatEvent.isCancelled()) {
-            chat.sendMessage(chatUser, sendChatEvent.getMessage());
+        if (Config.useEvents()) {
+            SendChatEvent sendChatEvent = new SendChatEvent(player, chatUser, chat, message);
+            Bukkit.getPluginManager().callEvent(sendChatEvent);
+            if (!sendChatEvent.isCancelled()) {
+                chat.sendMessage(chatUser, sendChatEvent.getMessage());
+            }
         }
+        else chat.sendMessage(chatUser, message);
     }
 }

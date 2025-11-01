@@ -3,6 +3,7 @@ package org.satellite.dev.progiple.satechat.commands.broadcast;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.TabExecutor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -39,18 +40,19 @@ public class BroadCastCommand implements TabExecutor {
         }
 
         String starterMessage = String.join(" ", List.of(strings).subList(0, strings.length));
-        if (Tools.adsBlocks(commandSender, starterMessage) || Tools.capsBlock(commandSender, starterMessage)) return true;
+        if (Tools.allBlocks(commandSender, starterMessage, null)) return true;
 
-        BroadcastCommandEvent event = new BroadcastCommandEvent(commandSender);
-        event.setMessage(starterMessage);
+        String message = Tools.useColor(commandSender, starterMessage);
+        if (Config.useEvents()) {
+            BroadcastCommandEvent event = new BroadcastCommandEvent(commandSender);
+            event.setMessage(message);
 
-        Bukkit.getPluginManager().callEvent(event);
-        if (event.isCancelled() || event.getMessage().isEmpty()) return true;
+            Bukkit.getPluginManager().callEvent(event);
+            if (event.isCancelled() || event.getMessage().isEmpty()) return true;
+            message = event.getMessage();
+        }
 
-        String message = event.getMessage();
-        message = Tools.swearReplacement(commandSender, message);
-        message = Tools.useColor(commandSender, message);
-        message = Tools.replacementWords(commandSender, message);
+        message = Tools.allReplacements(commandSender, message, false);
         BroadCastCommand.send(commandSender, Tools.replacementCommands(message, false));
         return true;
     }
@@ -61,10 +63,12 @@ public class BroadCastCommand implements TabExecutor {
     }
 
     public static void send(CommandSender sender, String message) {
-        Config.sendMessage(sender, "broadcast", "message-%-" + message, "sender-%-" + sender.getName());
+        String senderName = sender instanceof ConsoleCommandSender ? Config.getString("messages.console") : sender.getName();
+        Config.sendMessage(sender, "broadcast", "message-%-" + message, "sender-%-" + senderName);
     }
 
     public static void setCdPrevent() {
-        cd = new CooldownPrevent<>(Math.max(Config.getInt("broadcast_cooldown"), 0), TimeUnit.SECONDS, 125);
+        int time = Math.max(Config.getInt("broadcast_cooldown"), 0);
+        cd = new CooldownPrevent<>(time, TimeUnit.SECONDS, 125);
     }
 }

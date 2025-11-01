@@ -1,25 +1,32 @@
 package org.satellite.dev.progiple.satechat.configs;
 
+import lombok.Getter;
+import lombok.experimental.Accessors;
 import lombok.experimental.UtilityClass;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.NotNull;
 import org.novasparkle.lunaspring.API.configuration.IConfig;
-import org.satellite.dev.progiple.satechat.AutoMessager;
 import org.satellite.dev.progiple.satechat.SateChat;
+import org.satellite.dev.progiple.satechat.chats.state.PrivateManager;
 import org.satellite.dev.progiple.satechat.commands.broadcast.BroadCastCommand;
 
 @UtilityClass
 public class Config {
     private final IConfig config;
+    @Getter @Accessors(fluent = true) private boolean useEvents;
     static {
         config = new IConfig(SateChat.getINSTANCE());
+        useEvents = config.getBoolean("disable_events");
     }
 
     public void reload() {
         config.reload(SateChat.getINSTANCE());
+        useEvents = config.getBoolean("disable_events");
+
+        PrivateManager.initializeCooldown();
         BroadCastCommand.setCdPrevent();
-        AutoMessager.resetSettings();
+        SateChat.getINSTANCE().resetAutoMessager();
     }
 
     public @NotNull ConfigurationSection getSection(String path) {

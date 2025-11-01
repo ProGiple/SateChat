@@ -1,48 +1,90 @@
 package org.satellite.dev.progiple.satechat.configs;
 
 import lombok.AllArgsConstructor;
-import lombok.Setter;
+import lombok.experimental.UtilityClass;
+import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.ConfigurationSection;
 import org.novasparkle.lunaspring.API.configuration.IConfig;
+import org.novasparkle.lunaspring.API.util.utilities.Utils;
 import org.satellite.dev.progiple.satechat.SateChat;
+import org.satellite.dev.progiple.satechat.Tools;
+import org.satellite.dev.progiple.satechat.Translit;
 
-import java.io.File;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
 
+@UtilityClass
 public class SwearsConfig {
-    @Setter
-    private static SwearsConfig swearsConfig;
+    private IConfig config;
 
-    public static SwearsConfig get() {
-        return swearsConfig;
-    }
-
-    private final IConfig config;
-    public SwearsConfig(String path) {
-        File file = new File(SateChat.getINSTANCE().getDataFolder(), path);
-        this.config = new IConfig(file);
+    public void initialize(SateChat sateChat) {
+        config = new IConfig(sateChat.getDataFolder(), Config.getString("swear_block.file"));
     }
 
     public List<String> getList() {
-        return this.config.getStringList("list")
+        return config.getStringList("list")
                 .stream()
                 .map(String::toLowerCase)
                 .sorted(Comparator.comparingInt(String::length).reversed())
                 .toList();
     }
 
-    public boolean disableTranslates() {
-        return this.config.getBoolean("disable_translates");
-    }
-
     public Mode getMode() {
-        return Mode.valueOf(this.config.getString("replacement_mode"));
+        return Utils.getEnumValue(Mode.class, config.getString("replacement_mode"), Mode.START_WITH_END);
     }
 
     public void reload() {
-        this.config.reload();
+        config.reload();
     }
+
+    public String replace(CommandSender sender, String message) {
+        if (Tools.hasBypassPermission(sender, "swears")) return message;
+
+        ConfigurationSection section = Config.getSection("swear_block");
+        if (!section.getBoolean("enable")) return message;
+
+        List<String> swears = SwearsConfig.getList();
+        SwearsConfig.Mode mode = SwearsConfig.getMode();
+        if (swears.isEmpty()) return message;
+
+        boolean hasSwear = false;
+        String[] words = message.split("\\s+");
+
+        StringBuilder result = new StringBuilder();
+        for (String word : words) {
+            String lowered = word.toLowerCase();
+            String translit = Translit.process(lowered);
+
+            String cleaned = word.replaceAll("[^a-zA-Zа-яА-ЯёЁ]", "");
+            String cleanedLowered = cleaned.toLowerCase();
+            String translitCleaned = Translit.process(cleanedLowered);
+
+            boolean matched = swears.stream().anyMatch(swear ->
+                    lowered.contains(swear) || translit.contains(swear) ||
+                            (!cleanedLowered.isEmpty() && (cleanedLowered.contains(swear) || translitCleaned.contains(swear)))
+            );
+
+            if (matched) {
+                String replacement = mode.replace(cleaned.isEmpty() ? word : cleaned);
+                result.append(replacement).append(" ");
+                hasSwear = true;
+            } else {
+                result.append(word).append(" ");
+            }
+        }
+
+        if (hasSwear) {
+            Bukkit.getScheduler().runTaskLater(SateChat.getINSTANCE(), () -> {
+                Config.sendMessage(sender, "swear_warn");
+                Tools.dispatch(section.getStringList("commands"), sender.getName());
+            }, 2L);
+        }
+
+        return result.toString().trim();
+    }
+
 
     @AllArgsConstructor
     public enum Mode {

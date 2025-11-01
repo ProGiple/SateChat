@@ -13,6 +13,7 @@ import org.novasparkle.lunaspring.LunaPlugin;
 import org.satellite.dev.progiple.satechat.SateChat;
 import org.satellite.dev.progiple.satechat.Tools;
 import org.satellite.dev.progiple.satechat.configs.Config;
+import org.satellite.dev.progiple.satechat.listeners.event.AfterSendChatEvent;
 import org.satellite.dev.progiple.satechat.users.IChatUser;
 
 import java.util.Collection;
@@ -32,10 +33,7 @@ public class Chat extends RawChat {
     @Override
     public boolean sendMessage(IChatUser sender, final String starterMessage) {
         Player player = sender.getPlayer();
-        if (player == null
-                || Tools.spamBlock(this.latestMessage.get(sender.getUUID()), player, starterMessage)
-                || Tools.adsBlocks(player, starterMessage)
-                || Tools.capsBlock(player, starterMessage)) return false;
+        if (Tools.allBlocks(player, starterMessage, this.latestMessage.get(sender.getUUID()))) return false;
 
         if ((!Tools.hasBypassPermission(player, "cooldown") && this.getCooldownPrevent().isCancelled(null, sender))) {
             long value = this.getCooldownPrevent().getRemaining(sender);
@@ -46,22 +44,18 @@ public class Chat extends RawChat {
         boolean isClickable = this.getSettings().isClickable();
         this.latestMessage.put(sender.getUUID(), starterMessage);
 
-        Collection<? extends Player> collection = this.getMessageViewers(sender);
-        String message = this.mention(collection, Tools.useColor(player, starterMessage));
+        Collection<? extends Player> viewers = this.getMessageViewers(sender);
+        String message = this.mention(viewers, Tools.useColor(player, starterMessage));
 
         if (this.getSettings().getSymbol() != ' ') message = message.substring(1);
-        message = Tools.swearReplacement(player, message);
-        message = Tools.replacementWords(player, message);
-        message = Tools.replacementCommands(message, isClickable);
+        message = Tools.allReplacements(player, message, isClickable);
 
         String strSound = Config.getString("mentions.sound");
-        String endedMessage = Utils.setPlaceholders(player, this.getSettings().getFormat())
-                .replace("{message}", message)
-                .replace("[message]", message);
+        String endedMessage = Utils.setPlaceholders(player, this.getSettings().getFormat()).replace("[message]", message);
         endedMessage = ColorManager.color(endedMessage.replace("[sender]", player.getName()));
 
         String finalEndedMessage = endedMessage;
-        collection.forEach(p -> {
+        viewers.forEach(p -> {
             if (isClickable) p.spigot().sendMessage(ComponentUtils.createClickableText(finalEndedMessage, ClickEvent.Action.SUGGEST_COMMAND));
             else p.sendMessage(finalEndedMessage);
 
@@ -72,6 +66,12 @@ public class Chat extends RawChat {
                 .replace("[sender]", player.getName())
                 .replace("[message]",message));
         SateChat.getINSTANCE().getLogger().log(Level.INFO, logging);
+
+        if (Config.useEvents()) {
+            AfterSendChatEvent afterSendChatEvent = new AfterSendChatEvent(player, sender, this, finalEndedMessage, viewers);
+            afterSendChatEvent.callEvent();
+        }
+
         return true;
     }
 
@@ -88,9 +88,7 @@ public class Chat extends RawChat {
 
         String format = Config.getString("mentions." + (isClicable ? "clickable_format" : "format"));
         for (Player player : collection) {
-            message = message.replace(mentionString + player.getName(), format
-                            .replace("{mentioned}", player.getName())
-                            .replace("[mentioned]", player.getName()));
+            message = message.replace(mentionString + player.getName(), format.replace("[mentioned]", player.getName()));
         }
         return isClicable ? message : ColorManager.color(message);
     }
