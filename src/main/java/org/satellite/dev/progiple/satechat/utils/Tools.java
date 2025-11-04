@@ -5,6 +5,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
 import org.novasparkle.lunaspring.API.util.service.managers.ColorManager;
 import org.novasparkle.lunaspring.API.util.utilities.Cache;
 import org.satellite.dev.progiple.satechat.SateChat;
@@ -15,6 +16,7 @@ import org.satellite.dev.progiple.satechat.configs.swears.SwearsManager;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
@@ -129,6 +131,26 @@ public class Tools {
 
         String capsReplacer = Tools.capsBlock(sender, message);
         return capsReplacer == null ? message : capsReplacer;
+    }
+
+    public String mention(Collection<? extends Player> collection, String message, boolean isClickable) {
+        ConfigurationSection section = Config.getSection("mentions");
+        if (!section.getBoolean("enable")) return message;
+
+        String mentionString = section.getString("symbol");
+
+        String format = section.getString(isClickable ? "clickable_format" : "format");
+        if (format == null) return message;
+
+        for (Player player : collection) {
+            message = message.replace(mentionString + player.getName(), format.replace("[mentioned]", player.getName()));
+        }
+        return isClickable ? message : ColorManager.color(message);
+    }
+
+    public boolean hasMention(CommandSender mentioned, String message) {
+        String mentionString = Config.getString("mentions.symbol");
+        return message.contains(mentionString + mentioned.getName());
     }
 
     public enum CacheValue {

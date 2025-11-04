@@ -4,7 +4,6 @@ import lombok.Getter;
 import net.md_5.bungee.api.chat.ClickEvent;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.novasparkle.lunaspring.API.util.service.managers.ColorManager;
 import org.novasparkle.lunaspring.API.util.utilities.AnnounceUtils;
@@ -13,10 +12,10 @@ import org.novasparkle.lunaspring.API.util.utilities.LunaMath;
 import org.novasparkle.lunaspring.API.util.utilities.Utils;
 import org.novasparkle.lunaspring.LunaPlugin;
 import org.satellite.dev.progiple.satechat.SateChat;
-import org.satellite.dev.progiple.satechat.utils.Tools;
 import org.satellite.dev.progiple.satechat.configs.Config;
 import org.satellite.dev.progiple.satechat.listeners.event.AfterSendChatEvent;
 import org.satellite.dev.progiple.satechat.users.IChatUser;
+import org.satellite.dev.progiple.satechat.utils.Tools;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -80,25 +79,12 @@ public class Chat extends RawChat {
 
     @Override
     public boolean hasMention(CommandSender mentioned, String message) {
-        String mentionString = Config.getString("mentions.symbol");
-        return message.contains(mentionString + mentioned.getName());
+        return Tools.hasMention(mentioned, message);
     }
 
     @Override
     public String mention(Collection<? extends Player> collection, String message) {
-        ConfigurationSection section = Config.getSection("mentions");
-        if (!section.getBoolean("enable")) return message;
-
-        String mentionString = section.getString("symbol");
-        boolean isClickable = this.getSettings().isClickable();
-
-        String format = section.getString(isClickable ? "clickable_format" : "format");
-        if (format == null) return message;
-
-        for (Player player : collection) {
-            message = message.replace(mentionString + player.getName(), format.replace("[mentioned]", player.getName()));
-        }
-        return isClickable ? message : ColorManager.color(message);
+        return Tools.mention(collection, message, this.getSettings().isClickable());
     }
 
     @Override

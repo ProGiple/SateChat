@@ -5,15 +5,18 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.TabExecutor;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.novasparkle.lunaspring.API.commands.annotations.LunaCommand;
 import org.novasparkle.lunaspring.API.events.CooldownPrevent;
+import org.novasparkle.lunaspring.API.util.utilities.AnnounceUtils;
 import org.novasparkle.lunaspring.API.util.utilities.LunaMath;
 import org.satellite.dev.progiple.satechat.utils.Tools;
 import org.satellite.dev.progiple.satechat.configs.Config;
 import org.satellite.dev.progiple.satechat.listeners.event.BroadcastCommandEvent;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -53,6 +56,14 @@ public class BroadCastCommand implements TabExecutor {
         }
 
         message = Tools.allReplacements(commandSender, message, false);
+
+        Collection<? extends Player> viewers = Bukkit.getOnlinePlayers();
+        message = Tools.mention(viewers, message, false);
+
+        String strSound = Config.getString("mentions.sound");
+        for (Player viewer : viewers) {
+            if (Tools.hasMention(viewer, message)) AnnounceUtils.sound(viewer, strSound);
+        }
         BroadCastCommand.send(commandSender, Tools.replacementCommands(message, false));
         return true;
     }
