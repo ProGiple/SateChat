@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.novasparkle.lunaspring.API.events.CooldownPrevent;
 import org.novasparkle.lunaspring.API.util.service.managers.VanishManager;
 import org.novasparkle.lunaspring.API.util.utilities.LunaMath;
-import org.satellite.dev.progiple.satechat.Tools;
+import org.satellite.dev.progiple.satechat.utils.Tools;
 import org.satellite.dev.progiple.satechat.configs.Config;
 import org.satellite.dev.progiple.satechat.listeners.event.PrivateMessagingEvent;
 import org.satellite.dev.progiple.satechat.users.ChatUserManager;

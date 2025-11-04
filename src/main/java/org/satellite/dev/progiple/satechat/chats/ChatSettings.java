@@ -5,6 +5,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.novasparkle.lunaspring.API.util.service.managers.ColorManager;
 import org.novasparkle.lunaspring.API.util.utilities.Utils;
 
 import java.util.Collection;
@@ -28,7 +29,7 @@ public class ChatSettings {
         this.format = format != null && !format.isEmpty() ? format : "%player_name% -> {message}";
 
         String logger = section.getString("logger");
-        this.logger = logger != null && !logger.isEmpty() ? logger : this.format;
+        this.logger = ColorManager.color(logger != null && !logger.isEmpty() ? logger : this.format);
 
         String symbol = section.getString("symbol");
         this.symbol = symbol != null && !symbol.isEmpty() ? symbol.charAt(0) : ' ';

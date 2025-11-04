@@ -2,7 +2,9 @@ package org.satellite.dev.progiple.satechat.chats;
 
 import lombok.Getter;
 import net.md_5.bungee.api.chat.ClickEvent;
+import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.novasparkle.lunaspring.API.util.service.managers.ColorManager;
 import org.novasparkle.lunaspring.API.util.utilities.AnnounceUtils;
@@ -11,7 +13,7 @@ import org.novasparkle.lunaspring.API.util.utilities.LunaMath;
 import org.novasparkle.lunaspring.API.util.utilities.Utils;
 import org.novasparkle.lunaspring.LunaPlugin;
 import org.satellite.dev.progiple.satechat.SateChat;
-import org.satellite.dev.progiple.satechat.Tools;
+import org.satellite.dev.progiple.satechat.utils.Tools;
 import org.satellite.dev.progiple.satechat.configs.Config;
 import org.satellite.dev.progiple.satechat.listeners.event.AfterSendChatEvent;
 import org.satellite.dev.progiple.satechat.users.IChatUser;
@@ -22,6 +24,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Getter
 public class Chat extends RawChat {
@@ -83,14 +86,19 @@ public class Chat extends RawChat {
 
     @Override
     public String mention(Collection<? extends Player> collection, String message) {
-        String mentionString = Config.getString("mentions.symbol");
-        boolean isClicable = this.getSettings().isClickable();
+        ConfigurationSection section = Config.getSection("mentions");
+        if (!section.getBoolean("enable")) return message;
 
-        String format = Config.getString("mentions." + (isClicable ? "clickable_format" : "format"));
+        String mentionString = section.getString("symbol");
+        boolean isClickable = this.getSettings().isClickable();
+
+        String format = section.getString(isClickable ? "clickable_format" : "format");
+        if (format == null) return message;
+
         for (Player player : collection) {
             message = message.replace(mentionString + player.getName(), format.replace("[mentioned]", player.getName()));
         }
-        return isClicable ? message : ColorManager.color(message);
+        return isClickable ? message : ColorManager.color(message);
     }
 
     @Override
@@ -99,12 +107,15 @@ public class Chat extends RawChat {
         if (player == null) return null;
 
         Collection<Player> players = this.getSettings().getGlobalType().getList().apply(player);
+        String viewPermission = "satechat.view." + this.getSettings().getId();
+
+        Stream<Player> stream = players.stream().filter(p -> Tools.hasPermission(p, viewPermission));
         if (this.getSettings().getRange() > 0) {
-            return players
-                    .stream()
-                    .filter(p -> p.getWorld().equals(player.getWorld()) && p.getLocation().distance(player.getLocation()) <= this.getSettings().getRange())
+            Location playerLocation = player.getLocation();
+            return stream
+                    .filter(p -> p.getWorld().equals(player.getWorld()) && p.getLocation().distance(playerLocation) <= this.getSettings().getRange())
                     .collect(Collectors.toList());
-        } else return players;
+        } else return stream.toList();
     }
 
     @Override

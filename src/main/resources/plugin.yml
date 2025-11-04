@@ -61,6 +61,8 @@ permissions:
     default: op
   satechat.use.<chat>:
     default: false
+  satechat.view.<chat>:
+    default: false
   satechat.privatemessage:
     default: true
   satechat.reply:

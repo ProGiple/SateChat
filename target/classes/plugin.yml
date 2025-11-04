@@ -1,5 +1,5 @@
 name: SateChat
-version: '1.1.0'
+version: '1.2.1'
 main: org.satellite.dev.progiple.satechat.SateChat
 api-version: '1.16'
 authors: [ProGiple]
@@ -60,6 +60,8 @@ permissions:
   satechat.reload:
     default: op
   satechat.use.<chat>:
+    default: false
+  satechat.view.<chat>:
     default: false
   satechat.privatemessage:
     default: true

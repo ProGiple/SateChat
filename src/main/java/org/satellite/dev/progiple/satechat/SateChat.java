@@ -5,12 +5,13 @@ import org.novasparkle.lunaspring.LunaPlugin;
 import org.satellite.dev.progiple.satechat.chats.state.ChatManager;
 import org.satellite.dev.progiple.satechat.chats.state.PrivateManager;
 import org.satellite.dev.progiple.satechat.commands.broadcast.BroadCastCommand;
-import org.satellite.dev.progiple.satechat.configs.AdsConfig;
+import org.satellite.dev.progiple.satechat.configs.ads.AdsManager;
 import org.satellite.dev.progiple.satechat.configs.Config;
-import org.satellite.dev.progiple.satechat.configs.ReplacementsConfig;
-import org.satellite.dev.progiple.satechat.configs.SwearsConfig;
+import org.satellite.dev.progiple.satechat.configs.replacements.ReplacementsManager;
+import org.satellite.dev.progiple.satechat.configs.swears.SwearsManager;
 import org.satellite.dev.progiple.satechat.listeners.LeaveJoinHandler;
 import org.satellite.dev.progiple.satechat.listeners.SendChatHandler;
+import org.satellite.dev.progiple.satechat.utils.AutoMessager;
 
 public final class SateChat extends LunaPlugin {
     @Getter private static SateChat INSTANCE;
@@ -29,9 +30,9 @@ public final class SateChat extends LunaPlugin {
         PrivateManager.initializeCooldown();
         ChatManager.reload();
 
-        AdsConfig.initialize(this);
-        SwearsConfig.initialize(this);
-        ReplacementsConfig.initialize(this);
+        AdsManager.initialize();
+        SwearsManager.initialize();
+        ReplacementsManager.initialize();
 
         BroadCastCommand.setCdPrevent();
 

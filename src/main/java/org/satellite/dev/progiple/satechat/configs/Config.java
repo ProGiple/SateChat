@@ -11,22 +11,31 @@ import org.satellite.dev.progiple.satechat.SateChat;
 import org.satellite.dev.progiple.satechat.chats.state.PrivateManager;
 import org.satellite.dev.progiple.satechat.commands.broadcast.BroadCastCommand;
 
-@UtilityClass
+import java.util.List;
+
+@UtilityClass @Accessors(fluent = true)
 public class Config {
     private final IConfig config;
-    @Getter @Accessors(fluent = true) private boolean useEvents;
+    @Getter private boolean useEvents;
+    @Getter private boolean optimizedStorage;
     static {
         config = new IConfig(SateChat.getINSTANCE());
-        useEvents = config.getBoolean("disable_events");
+        loadOptimized();
     }
 
     public void reload() {
         config.reload(SateChat.getINSTANCE());
-        useEvents = config.getBoolean("disable_events");
+        loadOptimized();
 
         PrivateManager.initializeCooldown();
         BroadCastCommand.setCdPrevent();
         SateChat.getINSTANCE().resetAutoMessager();
+    }
+
+    private void loadOptimized() {
+        ConfigurationSection section = getSection("optimize");
+        useEvents = section.getBoolean("disable_events");
+        optimizedStorage = section.getBoolean("optimizedStorage");
     }
 
     public @NotNull ConfigurationSection getSection(String path) {
@@ -47,5 +56,13 @@ public class Config {
 
     public String getString(String path) {
         return config.getString(path);
+    }
+
+    public boolean getBoolean(String path) {
+        return config.getBoolean(path);
+    }
+
+    public List<String> getList(String path) {
+        return config.getStringList(path);
     }
 }

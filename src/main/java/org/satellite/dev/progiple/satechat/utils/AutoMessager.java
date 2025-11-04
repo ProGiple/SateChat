@@ -1,4 +1,4 @@
-package org.satellite.dev.progiple.satechat;
+package org.satellite.dev.progiple.satechat.utils;
 
 import com.google.common.collect.Lists;
 import org.bukkit.configuration.ConfigurationSection;

@@ -8,12 +8,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.novasparkle.lunaspring.API.commands.annotations.LunaCommand;
 import org.novasparkle.lunaspring.API.util.utilities.Utils;
-import org.satellite.dev.progiple.satechat.Tools;
+import org.satellite.dev.progiple.satechat.utils.Tools;
 import org.satellite.dev.progiple.satechat.chats.state.ChatManager;
-import org.satellite.dev.progiple.satechat.configs.AdsConfig;
+import org.satellite.dev.progiple.satechat.configs.ads.AdsManager;
 import org.satellite.dev.progiple.satechat.configs.Config;
-import org.satellite.dev.progiple.satechat.configs.ReplacementsConfig;
-import org.satellite.dev.progiple.satechat.configs.SwearsConfig;
+import org.satellite.dev.progiple.satechat.configs.replacements.ReplacementsManager;
+import org.satellite.dev.progiple.satechat.configs.swears.SwearsManager;
 import org.satellite.dev.progiple.satechat.users.ChatUserManager;
 
 import java.util.List;
@@ -49,9 +49,9 @@ public class SateChatCommand implements TabExecutor {
 
             Config.reload();
             ChatManager.reload();
-            ReplacementsConfig.reload();
-            SwearsConfig.reload();
-            AdsConfig.reload();
+            ReplacementsManager.reload();
+            SwearsManager.reload();
+            AdsManager.reload();
             Config.sendMessage(sender, "reload");
         }
         return true;

@@ -1,121 +1,99 @@
-disable_events: false # Выключить ли обработку ивентов? (Не трогайте, если не знаете для чего это! Это может привести к поломке плагинов, которые используют ивенты SateChat)
+optimize:
+  optimized_storage: false # Режим хранения конфигурационных данных: ставьте true - если у вас есть большая активность в чатах, если нет - ставьте false
+  disable_events: false # Выключить ли обработку ивентов? (Не трогайте, если не знаете для чего это! Это может привести к поломке плагинов, которые используют ивенты SateChat)
 chats:
   local:
-    enable: true
-    format: '&8▸&r %luckperms_prefix%&r%player_displayname%&r &8› &f[message]'
-    logger: '{S}[sender] &f› [message]'
-    range: 150
-    clickable: true
-    cooldownTicks: -1
+    enable: true # Включен ли чат?
+    format: '&8▸&r %luckperms_prefix%&r%player_displayname%&r &8› &f[message]' # Формат отправки сообщения в чат
+    logger: '{S}[sender] &f› [message]' # Формат логирования сообщения в консоли
+    range: 150 # Радиус отправки сообщения
+    clickable: true # Использовать ли кликабельные сообщения внутри чата?
+    cooldownTicks: -1 # Перезарядка перед использованием чата в тиках
   global:
     enable: false
     format: '{S}▸&r %luckperms_prefix%&r%player_displayname%&r {S}› &f[message]'
     logger: '{S}[sender] › &f[message]'
-    range: -1
-    range_type: ALL_WORLDS
-    symbol: '!'
+    range: -1 # -1 = бесконечная дальность
+    range_type: ALL_WORLDS # ALL_WORLDS - отправляет сообщения на все миры, IN_TARGET_WORLD - отправляет сообщения только в мир, где находиться игрок
+    symbol: '!' # Символ, с которого должно начинаться сообщение, для отправки сообщения в чат
     clickable: true
-    cooldownTicks: 40
-broadcast_cooldown: 30
-private_messages_cooldown_ticks: 60
-auto_messages_time: 90
+    cooldownTicks: 40 # = 2 секунды
+broadcast_cooldown: 30 # Время в секундах на отправку сообщения через /broadcast
+private_messages_cooldown_ticks: 60 # Время в тиках на отправку сообщений в личный чат другому игроку
+auto_messages_time: 90 # Раз в сколько секунд отправлять авто-сообщение?
 auto_messages: {}
-command_replacements:
+  # example:
+  #  - "Тестовое сообщение"
+command_replacements: # Форматирование команд, если ввести /msg-ProGiple, то оно преобразуется в [/msg ProGiple]
   enable: true
-  format: "&8[/[command]]&r"
-  clickable_format: "*%*&8[/[command]]&r*%*/[command]*%*"
-mentions:
-  symbol: '@'
-  format: "{S}@[mentioned]&r"
-  clickable_format: "*%*{S}@[mentioned]&r*%*/msg [mentioned]*%*"
-  sound: UI_BUTTON_CLICK
-spam_block:
+  format: "&8[/[command][args]]&r"
+  clickable_format: "*%*&8[/[command][args]]&r*%*/[command][args]*%*"
+mentions: # Отметка игрока в сообщении
+  enable: true
+  symbol: '@' # Символ, после которого нужно написать никнейм игрока
+  format: "{S}@[mentioned]&r" # Формат, mentioned - ник игрока, которого отметили
+  clickable_format: "*%*{S}@[mentioned]&r*%*/msg [mentioned]*%*" # Формат для чатов, которые поддерживают кликабельные сообщения
+  sound: UI_BUTTON_CLICK # Звук, который будет отправляться игроку, которого отметили
+spam_block: # Простая проверка на спам, которая просто блокирует отправку одного и того же сообщения подряд
   enable: false
-  commands: []
-swear_block:
+  commands: [] # Действия при срабатывании, [sender] - провокатор
+swear_block: # Цензура
   enable: true
-  commands: []
-  file: blocks/swears # path to file
-advertisement_block:
-  enable: false
-  file: blocks/ads # path to file
-  commands: []
-caps_block:
+  commands: [] # Действия при срабатывании, [sender] - провокатор
+  file: blocks/swears # Путь к файлу для настройки цензуры, полезно, если у вас есть несколько серверов, у которых одна и та же настройка, после изменения - необходима перезагрузка
+advertisement_block: # Блокировка рекламы айпи-адресов
   enable: true
-  min_letters_for_check: 12
-  min_caps_letter_percent: 60
-  full_block_send: false # полностью ли блокировать отправку сообщения? Если стоит - false то будет произведена замена всех символов на нижний регистр
-  commands: []
-replacement_words:
+  file: blocks/ads # Путь к файлу для настройки рекламы, после изменения - необходима перезагрузка
+  commands: [] # Действия при срабатывании, [sender] - провокатор
+caps_block: # Блокировка капса
   enable: true
-  file: blocks/replacements # path to file
+  min_letters_for_check: 12 # Со скольки символов сообщения нужно проверять на капс?
+  min_caps_letter_percent: 60 # Сколько процентов символов должно быть в верхнем регистре для срабатывания?
+  full_block_send: false # полностью ли блокировать отправку сообщения? Если стоит - false, то будет произведена замена всех символов на нижний регистр
+  commands: [] # Действия при срабатывании, [sender] - провокатор
+replacement_words: # Замена всего сообщения на другое, при наличии определённого слова
+  enable: true
+  file: blocks/replacements # путь к файлу для настройки реплейсментов, после изменения - необходима перезагрузка
 messages:
-  console: 'Консоль'
-  reload:
-    - "&aПлагин перезагружен!"
-  noPermission:
-    - "&cУ вас нет прав на это!"
-  chatNotExists:
-    - "&cЧат не существует!"
-  chatIsBlocked:
-    - "&cЧат [id] для вас заблокирован!"
-  chatCooldown:
-    - "&cПодождите еще [0] секунд..."
-  playerIsOffline:
-    - "&cИгрок оффлайн"
-  noReply:
-    - "&cНе найдено ни одно сообщения для переотправки"
+  console: 'Консоль' # Отображение консоли, при отправке сообщения (например, через /broadcast)
+  reload: "&aПлагин перезагружен!"
+  noPermission: "&cУ вас нет прав на это!"
+  chatNotExists: "&cЧат не существует!"
+  chatIsBlocked: "&cЧат [id] для вас заблокирован!"
+  chatCooldown: "&cПодождите еще [0] секунд..."
+  playerIsOffline: "&cИгрок оффлайн"
+  noReply: "&cНе найдено ни одно сообщения для переотправки"
   ignoreAll:
-    enabling:
-      - "&aВы начали игнорировать всех игроков!"
-    disabling:
-      - "&cВы перестали игнорировать всех игроков!"
+    enabling: "&aВы начали игнорировать всех игроков!"
+    disabling: "&cВы перестали игнорировать всех игроков!"
   ignore:
-    enabling:
-      - "&aВы начали игнорировать игрока [player]!"
-    disabling:
-      - "&cВы перестали игнорировать игрока [player]!"
-    youAreIgnored:
-      - "&cИгрок [player] вас игнорирует!"
+    enabling: "&aВы начали игнорировать игрока [player]!"
+    disabling: "&cВы перестали игнорировать игрока [player]!"
+    youAreIgnored: "&cИгрок [player] вас игнорирует!"
   spy:
-    enabling:
-      - "&aВы успешно включили режим шпиона!"
-    disabling:
-      - "&cВы успешно выключили режим шпиона!"
-    format:
-      - "{S}[ РШ ] [sender] &f-> {S}[recipient] &f» [message]"
+    enabling: "&aВы успешно включили режим шпиона!"
+    disabling:  "&cВы успешно выключили режим шпиона!"
+    format: "{S}[ РШ ] [sender] &f-> {S}[recipient] &f» [message]"
   vanilla:
     onJoin: "" # [player]
     onQuit: "" # [player]
     onDeath: "" # [player]
     onDeathFromPlayer: "" # [player] [killer]
   private_messages:
-    toMe:
-      - "{S}[ ЛС ] [sender] &f-> {S}Вы &f» [message]"
-    fromMe:
-      - "{S}[ ЛС ] Вы &f-> {S}[recipient] &f» [message]"
-    recipientIsYou:
-      - "&cНельзя отправлять сообщение самому себе!"
+    toMe: "{S}[ ЛС ] [sender] &f-> {S}Вы &f» [message]"
+    fromMe: "{S}[ ЛС ] Вы &f-> {S}[recipient] &f» [message]"
+    recipientIsYou: "&cНельзя отправлять сообщение самому себе!"
   broadcast:
     - "[BROADCAST] "
     - "[BROADCAST] {S}[ ! ] [sender] &f» [message]"
     - "[BROADCAST] "
-  spam_warn:
-    - "&cПерестань спамить!"
-  swear_warn:
-    - "&cПерестань писать плохие слова!"
-  caps_warn:
-    - "&cПерестань капсить!"
-  ads_warn:
-    - "&cПерестань рекламить чужие проекты!"
+  spam_warn: "&cПерестань спамить!"
+  swear_warn: "&cПерестань писать плохие слова!"
+  caps_warn: "&cПерестань капсить!"
+  ads_warn: "&cПерестань рекламить чужие проекты!"
   usage:
-    ignore:
-      - "&c/ignore all/<player>"
-    satechat:
-      - "&c/schat reload/send"
-    privatemessage:
-      - "&c/msg <player> <message>"
-    reply:
-      - "&c/reply <messagee>"
-    broadcast:
-      - "&c/bc <message>"
+    ignore: "&c/ignore all/<player>"
+    satechat: "&c/schat reload/send"
+    privatemessage: "&c/msg <player> <message>"
+    reply: "&c/reply <messagee>"
+    broadcast: "&c/bc <message>"
