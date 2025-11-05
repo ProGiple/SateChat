@@ -7,10 +7,11 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.novasparkle.lunaspring.API.util.service.managers.ColorManager;
+import org.novasparkle.lunaspring.API.util.utilities.AnnounceUtils;
 import org.novasparkle.lunaspring.API.util.utilities.Cache;
 import org.satellite.dev.progiple.satechat.SateChat;
-import org.satellite.dev.progiple.satechat.configs.ads.AdsManager;
 import org.satellite.dev.progiple.satechat.configs.Config;
+import org.satellite.dev.progiple.satechat.configs.ads.AdsManager;
 import org.satellite.dev.progiple.satechat.configs.replacements.ReplacementsManager;
 import org.satellite.dev.progiple.satechat.configs.swears.SwearsManager;
 
@@ -133,24 +134,39 @@ public class Tools {
         return capsReplacer == null ? message : capsReplacer;
     }
 
-    public String mention(Collection<? extends Player> collection, String message, boolean isClickable) {
+    public String mention(Collection<? extends Player> collection, String message, String sound, String mentionSymbol, boolean isClickable) {
         ConfigurationSection section = Config.getSection("mentions");
         if (!section.getBoolean("enable")) return message;
-
-        String mentionString = section.getString("symbol");
 
         String format = section.getString(isClickable ? "clickable_format" : "format");
         if (format == null) return message;
 
         for (Player player : collection) {
-            message = message.replace(mentionString + player.getName(), format.replace("[mentioned]", player.getName()));
+            String playerName = player.getName();
+
+            String value = String.format(" %s%s ", mentionSymbol, playerName);
+            if (message.contains(value)) {
+                AnnounceUtils.sound(player, sound);
+                message = message.replace(value, format.replace("[mentioned]", playerName));
+            }
         }
         return isClickable ? message : ColorManager.color(message);
     }
 
+    public String mention(Collection<? extends Player> collection, String message, String sound, boolean isClickable) {
+        return mention(collection, message, sound, Config.getString("mentions.symbol"), isClickable);
+    }
+
+    public String mention(Collection<? extends Player> collection, String message, boolean isClickable) {
+        return mention(collection, message, Config.getString("mentions.sound"), isClickable);
+    }
+
+    public boolean hasMention(CommandSender mentioned, String message, String mentionChar) {
+        return message.contains(" " + mentionChar + mentioned.getName() + " ");
+    }
+
     public boolean hasMention(CommandSender mentioned, String message) {
-        String mentionString = Config.getString("mentions.symbol");
-        return message.contains(mentionString + mentioned.getName());
+        return hasMention(mentioned, message, Config.getString("mentions.symbol"));
     }
 
     public enum CacheValue {

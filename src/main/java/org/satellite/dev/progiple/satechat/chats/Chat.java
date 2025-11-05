@@ -6,7 +6,6 @@ import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.novasparkle.lunaspring.API.util.service.managers.ColorManager;
-import org.novasparkle.lunaspring.API.util.utilities.AnnounceUtils;
 import org.novasparkle.lunaspring.API.util.utilities.ComponentUtils;
 import org.novasparkle.lunaspring.API.util.utilities.LunaMath;
 import org.novasparkle.lunaspring.API.util.utilities.Utils;
@@ -52,7 +51,6 @@ public class Chat extends RawChat {
         if (this.getSettings().getSymbol() != ' ') message = message.substring(1);
         message = Tools.allReplacements(player, message, isClickable);
 
-        String strSound = Config.getString("mentions.sound");
         String endedMessage = Utils.setPlaceholders(player, this.getSettings().getFormat()).replace("[message]", message);
         endedMessage = ColorManager.color(endedMessage.replace("[sender]", player.getName()));
 
@@ -60,8 +58,6 @@ public class Chat extends RawChat {
         viewers.forEach(p -> {
             if (isClickable) p.spigot().sendMessage(ComponentUtils.createClickableText(finalEndedMessage, ClickEvent.Action.SUGGEST_COMMAND));
             else p.sendMessage(finalEndedMessage);
-
-            if (this.hasMention(p, starterMessage)) AnnounceUtils.sound(p, strSound);
         });
 
         String logging = Utils.setPlaceholders(player, this.getSettings().getLogger()
