@@ -16,7 +16,7 @@ public class AutoMessager extends BukkitRunnable {
     public AutoMessager() {
         ConfigurationSection section = Config.getSection("auto_messages");
         for (String key : section.getKeys(false)) {
-            List<String> list = Lists.newArrayList(section.getString(key));
+            List<String> list = Lists.newArrayList(section.getStringList(key));
             if (list.isEmpty()) {
                 list.add(section.getString(key));
             }

@@ -26,7 +26,7 @@ public class ChatSettings {
         this.range = section.getKeys(false).contains("range") ? section.getInt("range") : -1;
 
         String format = section.getString("format");
-        this.format = format != null && !format.isEmpty() ? format : "%player_name% -> {message}";
+        this.format = format != null && !format.isEmpty() ? format : "%player_name% -> [message]";
 
         String logger = section.getString("logger");
         this.logger = ColorManager.color(logger != null && !logger.isEmpty() ? logger : this.format);
