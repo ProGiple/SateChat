@@ -54,7 +54,7 @@ public final class SateChat extends LunaPlugin {
         long time = Config.getInt("auto_messages_time") * 20L;
         if (time < 20L) return;
 
-        this.autoMessager = new AutoMessager();
-        this.autoMessager.runTaskTimerAsynchronously(this, time, time);
+        this.autoMessager = new AutoMessager(time);
+        this.autoMessager.runTaskAsynchronously(this);
     }
 }

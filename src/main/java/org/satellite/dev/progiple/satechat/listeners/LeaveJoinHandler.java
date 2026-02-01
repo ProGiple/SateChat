@@ -6,7 +6,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.novasparkle.lunaspring.API.util.utilities.Runnable;
+import org.novasparkle.lunaspring.API.util.utilities.tasks.Runnable;
 import org.satellite.dev.progiple.satechat.SateChat;
 import org.satellite.dev.progiple.satechat.configs.Config;
 import org.satellite.dev.progiple.satechat.users.ChatUserManager;
@@ -24,7 +24,7 @@ public class LeaveJoinHandler implements Listener {
 
         Runnable.start(() -> {
             this.broadcastNotifier(player, "onJoin");
-        }).runTaskLaterAsynchronously(SateChat.getINSTANCE(), 10L);
+        }).runTaskLaterAsynchronously(SateChat.getINSTANCE(), 12L);
     }
 
     @EventHandler
@@ -45,7 +45,9 @@ public class LeaveJoinHandler implements Listener {
         if (killer != null) {
             Config.sendMessage(player, "vanilla.onDeathFromPlayer",
                     "player-%-" + player.getName(), "killer-%-" + killer.getName());
-        } else this.broadcastNotifier(player, "onDeath");
+        }
+        else
+            this.broadcastNotifier(player, "onDeath");
     }
 
     private void broadcastNotifier(Player player, String path) {

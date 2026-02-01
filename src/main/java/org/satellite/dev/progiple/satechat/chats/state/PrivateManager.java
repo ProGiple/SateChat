@@ -3,10 +3,11 @@ package org.satellite.dev.progiple.satechat.chats.state;
 import lombok.Getter;
 import lombok.experimental.UtilityClass;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.novasparkle.lunaspring.API.events.CooldownPrevent;
-import org.novasparkle.lunaspring.API.util.service.managers.VanishManager;
+import org.novasparkle.lunaspring.API.util.modules.managers.VanishManager;
 import org.novasparkle.lunaspring.API.util.utilities.LunaMath;
 import org.satellite.dev.progiple.satechat.utils.Tools;
 import org.satellite.dev.progiple.satechat.configs.Config;
@@ -35,9 +36,12 @@ public class PrivateManager {
             return;
         }
 
-        Player recipient = VanishManager.exact(recipientUser.getUUID());
+        Player recipient = VanishManager.exact(sender, recipientUser.getUUID());
         if (recipient == null || !recipient.isOnline()) {
-            String name = recipient == null ? "NoData" : recipient.getName();
+            String name = recipient == null ? "" : recipient.getName();
+            OfflinePlayer cachedPlayer = Bukkit.getOfflinePlayer(recipientUser.getUUID());
+            if (name.isEmpty() && cachedPlayer != null) name = cachedPlayer.getName();
+
             Config.sendMessage(sender, "playerIsOffline", "player-%-" + name);
             return;
         }
