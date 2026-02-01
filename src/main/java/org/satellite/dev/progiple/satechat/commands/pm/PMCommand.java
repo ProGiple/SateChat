@@ -7,13 +7,13 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.novasparkle.lunaspring.API.commands.annotations.LunaCommand;
-import org.novasparkle.lunaspring.API.util.modules.managers.VanishManager;
+import org.novasparkle.lunaspring.API.util.service.managers.VanishManager;
 import org.novasparkle.lunaspring.API.util.utilities.Utils;
-import org.satellite.dev.progiple.satechat.utils.Tools;
 import org.satellite.dev.progiple.satechat.chats.state.PrivateManager;
 import org.satellite.dev.progiple.satechat.configs.Config;
 import org.satellite.dev.progiple.satechat.users.ChatUserManager;
 import org.satellite.dev.progiple.satechat.users.IChatUser;
+import org.satellite.dev.progiple.satechat.utils.Tools;
 
 import java.util.List;
 

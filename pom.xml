@@ -84,7 +84,7 @@
       <dependency>
           <groupId>com.github.NovaSparkle</groupId>
           <artifactId>LunaSpring</artifactId>
-          <version>3.10</version>
+          <version>3.10.1</version>
           <scope>provided</scope>
       </dependency>
       <dependency>
