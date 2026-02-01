@@ -34,7 +34,7 @@ public class Config {
 
     private void loadOptimized() {
         ConfigurationSection section = getSection("optimize");
-        useEvents = section.getBoolean("disable_events");
+        useEvents = !section.getBoolean("disable_events");
         optimizedStorage = section.getBoolean("optimizedStorage");
     }
 
