@@ -24,7 +24,7 @@ public class LeaveJoinHandler implements Listener {
 
         Runnable.start(() -> {
             this.broadcastNotifier(player, "onJoin");
-        }).runTaskLaterAsynchronously(SateChat.getINSTANCE(), 12L);
+        }).runTaskLaterAsynchronously(SateChat.getInstance(), 12L);
     }
 
     @EventHandler

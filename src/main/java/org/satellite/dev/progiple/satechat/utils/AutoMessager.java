@@ -44,7 +44,8 @@ public class AutoMessager extends LunaTask {
             this.keys.remove(messageId);
 
             Utils.playersAction(p -> {
-                if (!Tools.hasBypassPermission(p, "automessages")) AnnounceUtils.sendMessage(p, this.messages.get(messageId));
+                if (!Tools.hasBypassPermission(p, "automessages"))
+                    AnnounceUtils.sendMessage(p, this.messages.get(messageId));
             });
         }
     }

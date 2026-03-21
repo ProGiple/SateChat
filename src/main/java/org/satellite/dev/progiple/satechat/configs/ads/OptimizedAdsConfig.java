@@ -1,15 +1,12 @@
 package org.satellite.dev.progiple.satechat.configs.ads;
 
-import lombok.Getter;
 import org.bukkit.configuration.ConfigurationSection;
 import org.satellite.dev.progiple.satechat.configs.Config;
 
 import java.util.List;
 
-@Getter
 public class OptimizedAdsConfig extends AdsConfig {
     private final boolean enabled;
-    private final boolean optimized = true;
     private final List<String> actionCommands;
     private final List<String> formats;
     private final List<String> whitelist;
@@ -22,5 +19,35 @@ public class OptimizedAdsConfig extends AdsConfig {
         this.formats = super.getFormats();
         this.whitelist = super.getWhitelist();
         this.mode = super.getMode();
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    @Override
+    public List<String> getActionCommands() {
+        return actionCommands;
+    }
+
+    @Override
+    public List<String> getFormats() {
+        return formats;
+    }
+
+    @Override
+    public List<String> getWhitelist() {
+        return whitelist;
+    }
+
+    @Override
+    public Mode getMode() {
+        return mode;
+    }
+
+    @Override
+    public boolean isOptimized() {
+        return true;
     }
 }

@@ -32,13 +32,13 @@ public class ChatManager {
 
     public void reload() {
         new HashSet<>(chats).forEach(c -> {
-            if (c.getPlugin().equals(SateChat.getINSTANCE())) chats.remove(c);
+            if (c.getPlugin().equals(SateChat.getInstance())) chats.remove(c);
         });
         Config.getSection("chats")
                 .getValues(false)
                 .values()
                 .forEach(v -> register(
-                        new Chat(SateChat.getINSTANCE(), new ChatSettings((ConfigurationSection) v))));
+                        new Chat(SateChat.getInstance(), new ChatSettings((ConfigurationSection) v))));
     }
 
     public @NotNull Optional<RawChat> getChat(String id) {

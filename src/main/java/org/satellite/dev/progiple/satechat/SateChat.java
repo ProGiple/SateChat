@@ -14,15 +14,15 @@ import org.satellite.dev.progiple.satechat.listeners.SendChatHandler;
 import org.satellite.dev.progiple.satechat.utils.AutoMessager;
 
 public final class SateChat extends LunaPlugin {
-    @Getter private static SateChat INSTANCE;
+    @Getter private static SateChat instance;
     private AutoMessager autoMessager;
 
     @Override
     public void onEnable() {
-        INSTANCE = this;
+        instance = this;
 
         super.onEnable();
-        if (!INSTANCE.getDataFolder().exists()) {
+        if (!instance.getDataFolder().exists()) {
             this.loadFiles("blocks/ads.yml", "blocks/swears.yml", "blocks/replacements.yml");
         }
 

@@ -63,7 +63,7 @@ public class Chat extends RawChat {
         String logging = Utils.setPlaceholders(player, this.getSettings().getLogger()
                 .replace("[sender]", player.getName())
                 .replace("[message]",message));
-        SateChat.getINSTANCE().getLogger().log(Level.INFO, logging);
+        SateChat.getInstance().getLogger().log(Level.INFO, logging);
 
         if (Config.useEvents()) {
             AfterSendChatEvent afterSendChatEvent = new AfterSendChatEvent(player, sender, this, finalEndedMessage, viewers);

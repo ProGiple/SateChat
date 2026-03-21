@@ -49,7 +49,7 @@ public class Tools {
         if (!section.getBoolean("enable")) return false;
 
         if (latestMessage != null && latestMessage.equalsIgnoreCase(isMessage)) {
-            Bukkit.getScheduler().runTaskLater(SateChat.getINSTANCE(), () -> {
+            Bukkit.getScheduler().runTaskLater(SateChat.getInstance(), () -> {
                 Config.sendMessage(sender, "spam_warn");
                 Tools.dispatch(section.getStringList("commands"), sender.getName());
             }, 2L);
@@ -68,7 +68,7 @@ public class Tools {
         String checkedMessage = ChatColor.stripColor(message.replace(" ", ""));
         if ((double) checkedMessage.chars().filter(Character::isUpperCase).count() / checkedMessage.length() >= percent) {
             if (!CacheValue.CAPS.has(sender)) {
-                Bukkit.getScheduler().runTaskLater(SateChat.getINSTANCE(), () -> {
+                Bukkit.getScheduler().runTaskLater(SateChat.getInstance(), () -> {
                     Config.sendMessage(sender, "caps_warn");
                     Tools.dispatch(section.getStringList("commands"), sender.getName());
                 }, 2L);

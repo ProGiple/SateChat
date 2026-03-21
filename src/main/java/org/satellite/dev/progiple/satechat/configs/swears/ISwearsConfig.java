@@ -50,7 +50,7 @@ public interface ISwearsConfig extends IFileConfig {
         }
 
         if (hasSwear) {
-            Bukkit.getScheduler().runTaskLater(SateChat.getINSTANCE(), () -> {
+            Bukkit.getScheduler().runTaskLater(SateChat.getInstance(), () -> {
                 Config.sendMessage(sender, "swear_warn");
                 Tools.dispatch(getActionCommands(), sender.getName());
             }, 2L);

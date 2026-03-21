@@ -33,7 +33,7 @@ public interface IAdsConfig extends IFileConfig {
 
         if (whitelistedMessage.equalsIgnoreCase(checkedMessage)) return message;
         if (!Tools.CacheValue.ADS.has(sender)) {
-            Bukkit.getScheduler().runTaskLater(SateChat.getINSTANCE(), () -> {
+            Bukkit.getScheduler().runTaskLater(SateChat.getInstance(), () -> {
                 Config.sendMessage(sender, "ads_warn");
                 Tools.dispatch(getActionCommands(), sender.getName());
             }, 2L);

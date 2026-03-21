@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 public enum Translit {
     SHIFT_ONE("!", "i"),
     SHIFT_TWO("@", "a"),
-    SHIFT_THREE("$", "s"),
+    SHIFT_FOUR("$", "s"),
 
     ZERO(0, "o"),
     ONE(1, "l"),

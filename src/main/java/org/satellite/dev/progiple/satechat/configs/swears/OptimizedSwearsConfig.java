@@ -6,9 +6,7 @@ import org.satellite.dev.progiple.satechat.configs.Config;
 
 import java.util.List;
 
-@Getter
 public class OptimizedSwearsConfig extends SwearsConfig {
-    private final boolean optimized = true;
     private final boolean enabled;
     private final List<String> actionCommands;
     private final List<String> list;
@@ -20,5 +18,30 @@ public class OptimizedSwearsConfig extends SwearsConfig {
 
         this.list = super.getList();
         this.mode = super.getMode();
+    }
+
+    @Override
+    public boolean isOptimized() {
+        return true;
+    }
+
+    @Override
+    public List<String> getActionCommands() {
+        return actionCommands;
+    }
+
+    @Override
+    public List<String> getList() {
+        return list;
+    }
+
+    @Override
+    public Mode getMode() {
+        return mode;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
     }
 }

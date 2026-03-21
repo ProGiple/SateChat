@@ -19,17 +19,17 @@ public class Config {
     @Getter private boolean useEvents;
     @Getter private boolean optimizedStorage;
     static {
-        config = new IConfig(SateChat.getINSTANCE());
+        config = new IConfig(SateChat.getInstance());
         loadOptimized();
     }
 
     public void reload() {
-        config.reload(SateChat.getINSTANCE());
+        config.reload(SateChat.getInstance());
         loadOptimized();
 
         PrivateManager.initializeCooldown();
         BroadCastCommand.setCdPrevent();
-        SateChat.getINSTANCE().resetAutoMessager();
+        SateChat.getInstance().resetAutoMessager();
     }
 
     private void loadOptimized() {
